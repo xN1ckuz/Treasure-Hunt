@@ -1,0 +1,24 @@
+# Blender 3.5.1 MTL File: 'None'
+# www.blender.org
+
+newmtl Redwood_03
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 3
+map_Kd textures/Redwood_Base_02.png
+map_Ks textures/Redwood_Base_02_SPEC.png
+map_Bump -bm 1.000000 textures/Redwood_Base_02_NRM.png
+
+newmtl Redwood_Leaf_01
+Ns 200.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 3
+map_Kd textures/Redwood_Leaf_01.png
+map_Ks textures/Redwood_Leaf_01_SPEC.png
+map_Bump -bm 1.000000 textures/Redwood_Leaf_01_NRM.png
