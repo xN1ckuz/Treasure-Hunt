@@ -152,6 +152,8 @@ int main()
     shader.use();
     shader.setInt("diffuseTexture", 0);
     shader.setInt("shadowMap", 1);
+    shaderTerreno.use();
+    shaderTerreno.setInt("shadowMap", 1);
     debugDepthQuad.use();
     debugDepthQuad.setInt("depthMap", 0);
 
@@ -221,11 +223,16 @@ int main()
         shader.setVec3("viewPos", camera.Position);
         shader.setVec3("lightPos", lightPos);
         shader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
+        shaderTerreno.use();
+        shaderTerreno.setVec3("viewPos", camera.Position);
+        shaderTerreno.setVec3("lightPos", lightPos);
+        shaderTerreno.setMat4("lightSpaceMatrix", lightSpaceMatrix);
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, woodTexture);
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, depthMap);
         renderScene(shader, shaderTerreno, terrenoModel);
+
 
         // render Depth map to quad for visual debugging
         // ---------------------------------------------
@@ -255,22 +262,12 @@ int main()
 // --------------------
 void renderScene(Shader& shader, Shader& terreno, Model& modelTerreno)
 {
-    // floor
-    glm::mat4 model = glm::mat4(1.0f);
-    model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
-    model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));	// it's a bit too big for our scene, so scale it down
-    terreno.use();
-    terreno.setMat4("model", model);
-    modelTerreno.Draw(terreno);
+    
     
     shader.use();
-    model = glm::mat4(1.0f);
-    shader.setMat4("model", model);
-    glBindVertexArray(planeVAO);
-    glDrawArrays(GL_TRIANGLES, 0, 6);
 
     // cubes
-    model = glm::mat4(1.0f);
+    glm::mat4 model = glm::mat4(1.0f);
     model = glm::translate(model, glm::vec3(0.0f, 1.5f, 0.0));
     model = glm::scale(model, glm::vec3(0.5f));
     shader.setMat4("model", model);
@@ -286,6 +283,19 @@ void renderScene(Shader& shader, Shader& terreno, Model& modelTerreno)
     model = glm::scale(model, glm::vec3(0.25));
     shader.setMat4("model", model);
     renderCube();
+
+    // floor
+    glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+    glm::mat4 view = camera.GetViewMatrix();
+    model = glm::mat4(1.0f);
+    model = glm::translate(model, glm::vec3(0.0f, -0.2f, 0.0f)); // translate it down so it's at the center of the scene
+    model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));	// it's a bit too big for our scene, so scale it down
+    terreno.use();
+    terreno.setMat4("model", model);
+    terreno.setMat4("view", view);
+    terreno.setMat4("projection", projection);
+    modelTerreno.Draw(terreno);
+
 }
 
 

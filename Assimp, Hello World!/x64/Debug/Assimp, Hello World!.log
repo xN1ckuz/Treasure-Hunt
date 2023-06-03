@@ -1,13 +1,13 @@
 ﻿  main.cpp
-E:\Desktop\Improved Shadow Mapping\Assimp, Hello World!\shader_m.h(56,36): warning C4101: 'e': variabile locale senza riferimenti
-E:\Desktop\Improved Shadow Mapping\Assimp, Hello World!\mesh.h(84,1): warning C4267: 'argomento': conversione da 'size_t' a 'GLsizei'. Possibile perdita di dati.
-E:\Desktop\Improved Shadow Mapping\Assimp, Hello World!\main.cpp(168,28): warning C4244: 'inizializzazione': conversione da 'double' a 'float'. Possibile perdita di dati.
-E:\Desktop\Improved Shadow Mapping\Assimp, Hello World!\main.cpp(430,17): warning C4244: '=': conversione da 'double' a 'float'. Possibile perdita di dati.
-E:\Desktop\Improved Shadow Mapping\Assimp, Hello World!\main.cpp(431,17): warning C4244: '=': conversione da 'double' a 'float'. Possibile perdita di dati.
-E:\Desktop\Improved Shadow Mapping\Assimp, Hello World!\main.cpp(435,19): warning C4244: 'inizializzazione': conversione da 'double' a 'float'. Possibile perdita di dati.
-E:\Desktop\Improved Shadow Mapping\Assimp, Hello World!\main.cpp(436,19): warning C4244: 'inizializzazione': conversione da 'double' a 'float'. Possibile perdita di dati.
-E:\Desktop\Improved Shadow Mapping\Assimp, Hello World!\main.cpp(438,13): warning C4244: '=': conversione da 'double' a 'float'. Possibile perdita di dati.
-E:\Desktop\Improved Shadow Mapping\Assimp, Hello World!\main.cpp(439,13): warning C4244: '=': conversione da 'double' a 'float'. Possibile perdita di dati.
-E:\Desktop\Improved Shadow Mapping\Assimp, Hello World!\main.cpp(448,31): warning C4244: 'argomento': conversione da 'double' a 'float'. Possibile perdita di dati.
-  Assimp, Hello World!.vcxproj -> E:\Desktop\Improved Shadow Mapping\x64\Debug\Improved Shadow Mapping.exe
+E:\Desktop\Treasure-Hunt\Assimp, Hello World!\shader_m.h(56,36): warning C4101: 'e': variabile locale senza riferimenti
+E:\Desktop\Treasure-Hunt\Assimp, Hello World!\mesh.h(84,1): warning C4267: 'argomento': conversione da 'size_t' a 'GLsizei'. Possibile perdita di dati.
+E:\Desktop\Treasure-Hunt\Assimp, Hello World!\main.cpp(170,28): warning C4244: 'inizializzazione': conversione da 'double' a 'float'. Possibile perdita di dati.
+E:\Desktop\Treasure-Hunt\Assimp, Hello World!\main.cpp(440,17): warning C4244: '=': conversione da 'double' a 'float'. Possibile perdita di dati.
+E:\Desktop\Treasure-Hunt\Assimp, Hello World!\main.cpp(441,17): warning C4244: '=': conversione da 'double' a 'float'. Possibile perdita di dati.
+E:\Desktop\Treasure-Hunt\Assimp, Hello World!\main.cpp(445,19): warning C4244: 'inizializzazione': conversione da 'double' a 'float'. Possibile perdita di dati.
+E:\Desktop\Treasure-Hunt\Assimp, Hello World!\main.cpp(446,19): warning C4244: 'inizializzazione': conversione da 'double' a 'float'. Possibile perdita di dati.
+E:\Desktop\Treasure-Hunt\Assimp, Hello World!\main.cpp(448,13): warning C4244: '=': conversione da 'double' a 'float'. Possibile perdita di dati.
+E:\Desktop\Treasure-Hunt\Assimp, Hello World!\main.cpp(449,13): warning C4244: '=': conversione da 'double' a 'float'. Possibile perdita di dati.
+E:\Desktop\Treasure-Hunt\Assimp, Hello World!\main.cpp(458,31): warning C4244: 'argomento': conversione da 'double' a 'float'. Possibile perdita di dati.
+  Assimp, Hello World!.vcxproj -> E:\Desktop\Treasure-Hunt\x64\Debug\Improved Shadow Mapping.exe
           1 file copiati.
