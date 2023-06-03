@@ -17,7 +17,7 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void processInput(GLFWwindow* window);
 unsigned int loadTexture(const char* path);
-void renderScene(Shader& shader, Shader& terreno, Model& modelTerreno);
+void renderScene(Shader& shader, Shader& terreno, Model& modelTerreno, Shader& shaderAlbero, Model& modelAlbero);
 void renderCube();
 void renderQuad();
 
@@ -86,10 +86,12 @@ int main()
     Shader simpleDepthShader("shadow_mapping_depth.vs", "shadow_mapping_depth.fs");
     Shader debugDepthQuad("debug_quad.vs", "debug_quad_depth.fs");
     Shader shaderTerreno("model_loading.vs", "model_loading.fs");
+    Shader shaderAlbero("model_loading.vs", "model_loading.fs");
 
     // load models
     // -----------
     Model terrenoModel("resources/terreno/terreno.obj");
+    Model alberoModel("resources/models/redwood_01.obj");
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
@@ -154,6 +156,8 @@ int main()
     shader.setInt("shadowMap", 1);
     shaderTerreno.use();
     shaderTerreno.setInt("shadowMap", 1);
+    shaderAlbero.use();
+    shaderAlbero.setInt("shadowMap", 1);
     debugDepthQuad.use();
     debugDepthQuad.setInt("depthMap", 0);
 
@@ -203,7 +207,7 @@ int main()
         glClear(GL_DEPTH_BUFFER_BIT);
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, woodTexture);
-        renderScene(simpleDepthShader, shaderTerreno, terrenoModel);
+        renderScene(simpleDepthShader, shaderTerreno, terrenoModel, shaderAlbero, alberoModel);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
         // reset viewport
@@ -227,20 +231,24 @@ int main()
         shaderTerreno.setVec3("viewPos", camera.Position);
         shaderTerreno.setVec3("lightPos", lightPos);
         shaderTerreno.setMat4("lightSpaceMatrix", lightSpaceMatrix);
+        shaderAlbero.use();
+        shaderAlbero.setVec3("viewPos", camera.Position);
+        shaderAlbero.setVec3("lightPos", lightPos);
+        shaderAlbero.setMat4("lightSpaceMatrix", lightSpaceMatrix);
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, woodTexture);
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, depthMap);
-        renderScene(shader, shaderTerreno, terrenoModel);
+        renderScene(shader, shaderTerreno, terrenoModel, shaderAlbero, alberoModel);
 
 
         // render Depth map to quad for visual debugging
         // ---------------------------------------------
-        debugDepthQuad.use();
-        debugDepthQuad.setFloat("near_plane", near_plane);
-        debugDepthQuad.setFloat("far_plane", far_plane);
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, depthMap);
+        //debugDepthQuad.use();
+        //debugDepthQuad.setFloat("near_plane", near_plane);
+        //debugDepthQuad.setFloat("far_plane", far_plane);
+        //glActiveTexture(GL_TEXTURE0);
+        //glBindTexture(GL_TEXTURE_2D, depthMap);
         //renderQuad();
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
@@ -260,9 +268,8 @@ int main()
 
 // renders the 3D scene
 // --------------------
-void renderScene(Shader& shader, Shader& terreno, Model& modelTerreno)
+void renderScene(Shader& shader, Shader& terreno, Model& modelTerreno, Shader& shaderAlbero, Model& modelAlbero)
 {
-    
     
     shader.use();
 
@@ -295,6 +302,16 @@ void renderScene(Shader& shader, Shader& terreno, Model& modelTerreno)
     terreno.setMat4("view", view);
     terreno.setMat4("projection", projection);
     modelTerreno.Draw(terreno);
+
+    // floor
+    model = glm::mat4(1.0f);
+    model = glm::translate(model, glm::vec3(0.0f, -0.2f, 0.0f)); // translate it down so it's at the center of the scene
+    model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));	// it's a bit too big for our scene, so scale it down
+    shaderAlbero.use();
+    shaderAlbero.setMat4("model", model);
+    shaderAlbero.setMat4("view", view);
+    shaderAlbero.setMat4("projection", projection);
+    modelAlbero.Draw(shaderAlbero);
 
 }
 
