@@ -28,7 +28,7 @@
     <None Include="shadow_mapping.fs">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="shadow_mapping_depth.vs">
+    <None Include="shadow_mapping_depth_alpha.vs">
       <Filter>Resource Files</Filter>
     </None>
     <None Include="shadow_mapping_depth.fs">
@@ -44,6 +44,12 @@
       <Filter>Resource Files</Filter>
     </None>
     <None Include="model_loading.vs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="model_loading_alpha.fs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="shadow_mapping_depth.vs">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

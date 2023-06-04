@@ -168,11 +168,13 @@
     <None Include="debug_quad.vs" />
     <None Include="model_loading.fs" />
     <None Include="model_loading.vs" />
+    <None Include="model_loading_alpha.fs" />
     <None Include="shadow_mapping.fs" />
     <None Include="shadow_mapping.vs" />
     <None Include="packages.config" />
     <None Include="shadow_mapping_depth.fs" />
     <None Include="shadow_mapping_depth.vs" />
+    <None Include="shadow_mapping_depth_alpha.vs" />
     <None Include="text.fs" />
     <None Include="text.vs" />
   </ItemGroup>
