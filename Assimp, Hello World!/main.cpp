@@ -289,14 +289,6 @@ void renderScene(Shader& shader, Shader& terreno, Model& modelTerreno, Shader& s
     terreno.use();
     terreno.setMat4("model", model);
     modelTerreno.Draw(terreno);
-
-    //albero
-    model = glm::mat4(1.0f);
-    model = glm::translate(model, glm::vec3(0.0f, -0.2f, 0.0f)); // translate it down so it's at the center of the scene
-    model = glm::scale(model, glm::vec3(1.0f, 0.5f, 1.0f));	// it's a bit too big for our scene, so scale it down
-    shaderAlbero.use();
-    shaderAlbero.setMat4("model", model);
-    modelAlbero.Draw(shaderAlbero);
     
     // cubes
     shader.use();
@@ -318,6 +310,14 @@ void renderScene(Shader& shader, Shader& terreno, Model& modelTerreno, Shader& s
     model = glm::scale(model, glm::vec3(0.25));
     shader.setMat4("model", model);
     renderCube();
+
+    //albero
+    model = glm::mat4(1.0f);
+    model = glm::translate(model, glm::vec3(0.0f, -0.2f, 0.0f)); // translate it down so it's at the center of the scene
+    model = glm::scale(model, glm::vec3(1.0f, 0.5f, 1.0f));	// it's a bit too big for our scene, so scale it down
+    shaderAlbero.use();
+    shaderAlbero.setMat4("model", model);
+    modelAlbero.Draw(shaderAlbero);
 
 }
 
