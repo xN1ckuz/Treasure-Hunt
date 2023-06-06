@@ -22,8 +22,8 @@ void renderCube();
 void renderQuad();
 
 // settings
-const unsigned int SCR_WIDTH = 1280;
-const unsigned int SCR_HEIGHT = 720;
+const unsigned int SCR_WIDTH = 1920;
+const unsigned int SCR_HEIGHT = 1080;
 
 // camera
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
@@ -199,7 +199,7 @@ int main()
         // --------------------------------------------------------------
         glm::mat4 lightProjection, lightView;
         glm::mat4 lightSpaceMatrix;
-        float near_plane = 1.0f, far_plane = 30.5f;
+        float near_plane = 1.0f, far_plane = 100.5f;
         //lightProjection = glm::perspective(glm::radians(45.0f), (GLfloat)SHADOW_WIDTH / (GLfloat)SHADOW_HEIGHT, near_plane, far_plane); // note that if you use a perspective projection matrix you'll have to change the light position as the current light position isn't enough to reflect the whole scene
         lightProjection = glm::ortho(-20.0f, 20.0f, -20.0f, 20.0f, near_plane, far_plane);
         lightView = glm::lookAt(lightPos, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
