@@ -22,8 +22,8 @@ void renderCube();
 void renderQuad();
 
 // settings
-const unsigned int SCR_WIDTH = 1600;
-const unsigned int SCR_HEIGHT = 1200;
+const unsigned int SCR_WIDTH = 1280;
+const unsigned int SCR_HEIGHT = 720;
 
 // camera
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
@@ -46,6 +46,7 @@ int main()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_SAMPLES, 16);
 
 #ifdef __APPLE__
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
@@ -78,6 +79,7 @@ int main()
 
     // configure global opengl state
     // -----------------------------
+    glEnable(GL_MULTISAMPLE);
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -92,8 +94,10 @@ int main()
 
     // load models
     // -----------
-    Model terrenoModel("resources/terreno/terreno.obj");
-    Model alberoModel("resources/models/redwood_01.obj");
+    //Model terrenoModel("resources/terreno/terreno.obj");
+    Model terrenoModel("resources/models/world.obj");
+    //Model alberoModel("resources/models/redwood_01.obj");
+    Model alberoModel("resources/models/grass.obj");
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
@@ -165,7 +169,7 @@ int main()
 
     // lighting info
     // -------------
-    glm::vec3 lightPos(-2.0f, 4.5f, -6.5f);
+    glm::vec3 lightPos(-2.0f, 10.5f, -6.5f);
 
     // render loop
     // -----------
@@ -252,7 +256,7 @@ int main()
         glBindTexture(GL_TEXTURE_2D, depthMap);
         renderScene(shader, shaderTerreno, terrenoModel, shaderAlbero, alberoModel);
 
-
+        
         // render Depth map to quad for visual debugging
         // ---------------------------------------------
         //debugDepthQuad.use();
@@ -314,7 +318,7 @@ void renderScene(Shader& shader, Shader& terreno, Model& modelTerreno, Shader& s
     //albero
     model = glm::mat4(1.0f);
     model = glm::translate(model, glm::vec3(0.0f, -0.2f, 0.0f)); // translate it down so it's at the center of the scene
-    model = glm::scale(model, glm::vec3(1.0f, 0.5f, 1.0f));	// it's a bit too big for our scene, so scale it down
+    model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));	// it's a bit too big for our scene, so scale it down
     shaderAlbero.use();
     shaderAlbero.setMat4("model", model);
     modelAlbero.Draw(shaderAlbero);
