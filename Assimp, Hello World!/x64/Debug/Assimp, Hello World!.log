@@ -1,13 +1,13 @@
 ﻿  main.cpp
 E:\Desktop\Treasure-Hunt\Assimp, Hello World!\shader_m.h(56,36): warning C4101: 'e': variabile locale senza riferimenti
 E:\Desktop\Treasure-Hunt\Assimp, Hello World!\mesh.h(84,1): warning C4267: 'argomento': conversione da 'size_t' a 'GLsizei'. Possibile perdita di dati.
-E:\Desktop\Treasure-Hunt\Assimp, Hello World!\main.cpp(176,28): warning C4244: 'inizializzazione': conversione da 'double' a 'float'. Possibile perdita di dati.
-E:\Desktop\Treasure-Hunt\Assimp, Hello World!\main.cpp(463,17): warning C4244: '=': conversione da 'double' a 'float'. Possibile perdita di dati.
-E:\Desktop\Treasure-Hunt\Assimp, Hello World!\main.cpp(464,17): warning C4244: '=': conversione da 'double' a 'float'. Possibile perdita di dati.
-E:\Desktop\Treasure-Hunt\Assimp, Hello World!\main.cpp(468,19): warning C4244: 'inizializzazione': conversione da 'double' a 'float'. Possibile perdita di dati.
-E:\Desktop\Treasure-Hunt\Assimp, Hello World!\main.cpp(469,19): warning C4244: 'inizializzazione': conversione da 'double' a 'float'. Possibile perdita di dati.
-E:\Desktop\Treasure-Hunt\Assimp, Hello World!\main.cpp(471,13): warning C4244: '=': conversione da 'double' a 'float'. Possibile perdita di dati.
-E:\Desktop\Treasure-Hunt\Assimp, Hello World!\main.cpp(472,13): warning C4244: '=': conversione da 'double' a 'float'. Possibile perdita di dati.
-E:\Desktop\Treasure-Hunt\Assimp, Hello World!\main.cpp(481,31): warning C4244: 'argomento': conversione da 'double' a 'float'. Possibile perdita di dati.
+E:\Desktop\Treasure-Hunt\Assimp, Hello World!\main.cpp(188,28): warning C4244: 'inizializzazione': conversione da 'double' a 'float'. Possibile perdita di dati.
+E:\Desktop\Treasure-Hunt\Assimp, Hello World!\main.cpp(478,17): warning C4244: '=': conversione da 'double' a 'float'. Possibile perdita di dati.
+E:\Desktop\Treasure-Hunt\Assimp, Hello World!\main.cpp(479,17): warning C4244: '=': conversione da 'double' a 'float'. Possibile perdita di dati.
+E:\Desktop\Treasure-Hunt\Assimp, Hello World!\main.cpp(483,19): warning C4244: 'inizializzazione': conversione da 'double' a 'float'. Possibile perdita di dati.
+E:\Desktop\Treasure-Hunt\Assimp, Hello World!\main.cpp(484,19): warning C4244: 'inizializzazione': conversione da 'double' a 'float'. Possibile perdita di dati.
+E:\Desktop\Treasure-Hunt\Assimp, Hello World!\main.cpp(486,13): warning C4244: '=': conversione da 'double' a 'float'. Possibile perdita di dati.
+E:\Desktop\Treasure-Hunt\Assimp, Hello World!\main.cpp(487,13): warning C4244: '=': conversione da 'double' a 'float'. Possibile perdita di dati.
+E:\Desktop\Treasure-Hunt\Assimp, Hello World!\main.cpp(496,31): warning C4244: 'argomento': conversione da 'double' a 'float'. Possibile perdita di dati.
   Assimp, Hello World!.vcxproj -> E:\Desktop\Treasure-Hunt\x64\Debug\Improved Shadow Mapping.exe
           1 file copiati.

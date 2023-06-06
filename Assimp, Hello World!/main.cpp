@@ -20,6 +20,7 @@ unsigned int loadTexture(const char* path);
 void renderScene(Shader& shader, Shader& terreno, Model& modelTerreno, Shader& shaderAlbero, Model& modelAlbero);
 void renderCube();
 void renderQuad();
+void calculateFPS();
 
 // settings
 const unsigned int SCR_WIDTH = 1920;
@@ -38,6 +39,12 @@ float lastFrame = 0.0f;
 // meshes
 unsigned int planeVAO;
 
+//FPS
+unsigned int frameCount = 0;
+double previousTime = 0;
+double timeInterval = 0;
+unsigned int fps = 0;
+
 int main()
 {
     // glfw: initialize and configure
@@ -54,7 +61,8 @@ int main()
 
     // glfw window creation
     // --------------------
-    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Improved Shadow Mapping", NULL, NULL);
+    string TITOLO_APP = "Treasure-Hunt";
+    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, TITOLO_APP.data(), NULL, NULL);
     if (window == NULL)
     {
         std::cout << "Failed to create GLFW window" << std::endl;
@@ -270,6 +278,9 @@ int main()
         // -------------------------------------------------------------------------------
         glfwSwapBuffers(window);
         glfwPollEvents();
+        calculateFPS();
+        std::string titolo_str =  TITOLO_APP + " FPS: " + std::to_string(fps);
+        glfwSetWindowTitle(window, titolo_str.c_str());
     }
 
     // optional: de-allocate all resources once they've outlived their purpose:
@@ -524,3 +535,23 @@ unsigned int loadTexture(char const* path)
     return textureID;
 }
 
+void calculateFPS() {
+    //  Incrementiamo il contatore
+    frameCount++;
+    //  Determiniamo il numero di millisecondi trascorsi dalla glutInit
+    double currentTime = glfwGetTime();
+    //  Calcoliamo il tempo trascorso
+    timeInterval = currentTime - previousTime;
+
+    // Se è passato un secondo aggiorna la variabile fps
+    if (timeInterval > 1.0f) {
+        //  frameCount mantiene il numero di frame generati in un secondo
+        fps = frameCount;
+
+        //  Salviamo il tempo trascorso per riutilizzarlo la prossima volta
+        previousTime = currentTime;
+
+        //  Azzeriamo il contatore dei tempi
+        frameCount = 0;
+    }
+}
