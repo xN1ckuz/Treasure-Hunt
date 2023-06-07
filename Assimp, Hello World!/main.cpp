@@ -281,6 +281,7 @@ int main()
         calculateFPS();
         std::string titolo_str =  TITOLO_APP + " FPS: " + std::to_string(fps);
         glfwSetWindowTitle(window, titolo_str.c_str());
+        glfwSwapInterval(0);
     }
 
     // optional: de-allocate all resources once they've outlived their purpose:
