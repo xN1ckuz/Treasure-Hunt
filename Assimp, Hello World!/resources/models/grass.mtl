@@ -8,19 +8,9 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.450000
 d 1.000000
 illum 2
-map_Kd D:/Projects/Treasure Hunt/Assimp, Hello World!/resources/models/textures/Bush_01.png
-map_Ks D:/Projects/Treasure Hunt/Assimp, Hello World!/resources/models/textures/Bush_01_SPEC.png
-map_Bump -bm 1.000000 D:/Projects/Treasure Hunt/Assimp, Hello World!/resources/models/textures/Bush_01_NRM.png
-
-newmtl Landscape_01
-Ns 200.000000
-Ka 1.000000 1.000000 1.000000
-Ks 0.500000 0.500000 0.500000
-Ke 0.000000 0.000000 0.000000
-Ni 1.450000
-d 1.000000
-illum 2
-map_Kd D:/Projects/Treasure Hunt/Assimp, Hello World!/resources/models/textures/terrain.jpg
+map_Kd textures/Bush_01.png
+map_Ks textures/Bush_01_SPEC.png
+map_Bump -bm 1.000000 textures/Bush_01_NRM.png
 
 newmtl NAT_Grass
 Ns 200.000000
@@ -30,7 +20,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.450000
 d 1.000000
 illum 2
-map_Kd D:/Projects/Treasure Hunt/Assimp, Hello World!/resources/models/textures/NAT_Grass1_AS.png
+map_Kd textures/NAT_Grass1_AS.png
 
 newmtl NAT_Grass.001
 Ns 200.000000
@@ -40,48 +30,4 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.450000
 d 1.000000
 illum 2
-map_Kd D:/Projects/Treasure Hunt/Assimp, Hello World!/resources/models/textures/NAT_Grass1_AS.png
-
-newmtl Redwood_03.001
-Ns 200.000000
-Ka 1.000000 1.000000 1.000000
-Ke 0.000000 0.000000 0.000000
-Ni 1.450000
-d 1.000000
-illum 1
-map_Kd D:/Projects/Treasure Hunt/Assimp, Hello World!/resources/models/textures/Redwood_Base_02.png
-map_Ks D:/Projects/Treasure Hunt/Assimp, Hello World!/resources/models/textures/Redwood_Base_02_SPEC.png
-map_Bump -bm 1.000000 D:/Projects/Treasure Hunt/Assimp, Hello World!/resources/models/textures/Redwood_Base_02_NRM.png
-
-newmtl Redwood_04
-Ns 200.000000
-Ka 1.000000 1.000000 1.000000
-Ke 0.000000 0.000000 0.000000
-Ni 1.450000
-d 1.000000
-illum 1
-map_Kd D:/Projects/Treasure Hunt/Assimp, Hello World!/resources/models/textures/Redwood_Base_01.png
-map_Ks D:/Projects/Treasure Hunt/Assimp, Hello World!/resources/models/textures/Redwood_Base_01_SPEC.png
-map_Bump -bm 1.000000 D:/Projects/Treasure Hunt/Assimp, Hello World!/resources/models/textures/Redwood_Base_01_NRM.png
-
-newmtl Redwood_Leaf_01
-Ns 200.000000
-Ka 1.000000 1.000000 1.000000
-Ke 0.000000 0.000000 0.000000
-Ni 1.450000
-d 1.000000
-illum 1
-map_Kd D:/Projects/Treasure Hunt/Assimp, Hello World!/resources/models/textures/Redwood_Leaf_01.png
-map_Ks D:/Projects/Treasure Hunt/Assimp, Hello World!/resources/models/textures/Redwood_Leaf_01_SPEC.png
-map_Bump -bm 1.000000 D:/Projects/Treasure Hunt/Assimp, Hello World!/resources/models/textures/Redwood_Leaf_01_NRM.png
-
-newmtl Redwood_Leaf_01.002
-Ns 200.000000
-Ka 1.000000 1.000000 1.000000
-Ke 0.000000 0.000000 0.000000
-Ni 1.450000
-d 1.000000
-illum 1
-map_Kd D:/Projects/Treasure Hunt/Assimp, Hello World!/resources/models/textures/Redwood_Leaf_01.png
-map_Ks D:/Projects/Treasure Hunt/Assimp, Hello World!/resources/models/textures/Redwood_Leaf_01_SPEC.png
-map_Bump -bm 1.000000 D:/Projects/Treasure Hunt/Assimp, Hello World!/resources/models/textures/Redwood_Leaf_01_NRM.png
+map_Kd textures/NAT_Grass1_AS.png
