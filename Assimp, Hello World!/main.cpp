@@ -10,6 +10,9 @@
 #include "camera.h"
 #include "model.h"
 
+#include "DrawableObj.h"
+#include "Terrain.h"
+
 #include <iostream>
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -17,7 +20,7 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void processInput(GLFWwindow* window);
 unsigned int loadTexture(const char* path);
-void renderScene(Shader& shader, Shader& terreno, Model& modelTerreno, Shader& shaderAlbero, Model& modelAlbero);
+void renderScene(Shader& shader, DrawableObj albero, DrawableObj terreno, DrawableObj erba);
 void renderCube();
 void renderQuad();
 void calculateFPS();
@@ -27,7 +30,7 @@ const unsigned int SCR_WIDTH = 1920;
 const unsigned int SCR_HEIGHT = 1080;
 
 // camera
-Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+Camera camera;
 float lastX = (float)SCR_WIDTH / 2.0;
 float lastY = (float)SCR_HEIGHT / 2.0;
 bool firstMouse = true;
@@ -97,15 +100,17 @@ int main()
     Shader shader("shadow_mapping.vs", "shadow_mapping.fs");
     Shader simpleDepthShader("shadow_mapping_depth.vs", "shadow_mapping_depth.fs");
     Shader debugDepthQuad("debug_quad.vs", "debug_quad_depth.fs");
-    Shader shaderTerreno("model_loading.vs", "model_loading.fs");
-    Shader shaderAlbero("model_loading.vs", "model_loading_alpha.fs");
+    Shader shaderWithoutAlpha("model_loading.vs", "model_loading.fs");
+    Shader shaderWithAlpha("model_loading.vs", "model_loading_alpha.fs");
 
-    // load models
-    // -----------
-    //Model terrenoModel("resources/terreno/terreno.obj");
-    Model terrenoModel("resources/models/world.obj");
-    //Model alberoModel("resources/models/redwood_01.obj");
-    Model alberoModel("resources/models/grass.obj");
+    //load drowables
+    //----------------
+    DrawableObj erba = DrawableObj("resources/models/grass.obj");
+    Terrain terreno = Terrain("resources/models/world.obj");
+    DrawableObj albero = DrawableObj("resources/models/redwood_01.obj");
+
+    //Camera con walk
+    camera = Camera(&terreno,terreno.updateCameraPositionOnMap(glm::vec3(0.0f, 0.0f, 3.0f),2));
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
@@ -168,10 +173,10 @@ int main()
     shader.use();
     shader.setInt("diffuseTexture", 3);
     shader.setInt("shadowMap", 4);
-    shaderTerreno.use();
-    shaderTerreno.setInt("shadowMap", 4);
-    shaderAlbero.use();
-    shaderAlbero.setInt("shadowMap", 4);
+    shaderWithoutAlpha.use();
+    shaderWithoutAlpha.setInt("shadowMap", 4);
+    shaderWithAlpha.use();
+    shaderWithAlpha.setInt("shadowMap", 4);
     debugDepthQuad.use();
     debugDepthQuad.setInt("depthMap", 4);
 
@@ -217,13 +222,17 @@ int main()
         simpleDepthShader.use();
         simpleDepthShader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
 
+        terreno.setShaders(&simpleDepthShader);
+        erba.setShaders(&simpleDepthShader);
+        albero.setShaders(&simpleDepthShader);
+
         glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
         glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
         glClear(GL_DEPTH_BUFFER_BIT);
         glActiveTexture(GL_TEXTURE3);
         glBindTexture(GL_TEXTURE_2D, woodTexture);
 
-        renderScene(simpleDepthShader, simpleDepthShader, terrenoModel, simpleDepthShader, alberoModel);
+        renderScene(simpleDepthShader, albero, terreno, erba);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
         // reset viewport
@@ -237,19 +246,24 @@ int main()
         glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
         glm::mat4 view = camera.GetViewMatrix();
 
-        shaderTerreno.use();
-        shaderTerreno.setMat4("view", view);
-        shaderTerreno.setMat4("projection", projection);
-        shaderTerreno.setVec3("viewPos", camera.Position);
-        shaderTerreno.setVec3("lightPos", lightPos);
-        shaderTerreno.setMat4("lightSpaceMatrix", lightSpaceMatrix);
+        shaderWithoutAlpha.use();
+        shaderWithoutAlpha.setMat4("view", view);
+        shaderWithoutAlpha.setMat4("projection", projection);
+        shaderWithoutAlpha.setVec3("viewPos", camera.Position);
+        shaderWithoutAlpha.setVec3("lightPos", lightPos);
+        shaderWithoutAlpha.setMat4("lightSpaceMatrix", lightSpaceMatrix);
 
-        shaderAlbero.use();
-        shaderAlbero.setMat4("view", view);
-        shaderAlbero.setMat4("projection", projection);
-        shaderAlbero.setVec3("viewPos", camera.Position);
-        shaderAlbero.setVec3("lightPos", lightPos);
-        shaderAlbero.setMat4("lightSpaceMatrix", lightSpaceMatrix);
+        shaderWithAlpha.use();
+        shaderWithAlpha.setMat4("view", view);
+        shaderWithAlpha.setMat4("projection", projection);
+        shaderWithAlpha.setVec3("viewPos", camera.Position);
+        shaderWithAlpha.setVec3("lightPos", lightPos);
+        shaderWithAlpha.setMat4("lightSpaceMatrix", lightSpaceMatrix);
+        shaderWithAlpha.setInt("shadowMap", 4);
+
+        terreno.setShaders(&shaderWithoutAlpha);
+        erba.setShaders(&shaderWithAlpha);
+        albero.setShaders(&shaderWithAlpha);
 
         shader.use();
         shader.setMat4("projection", projection);
@@ -262,7 +276,7 @@ int main()
         glBindTexture(GL_TEXTURE_2D, woodTexture);
         glActiveTexture(GL_TEXTURE4);
         glBindTexture(GL_TEXTURE_2D, depthMap);
-        renderScene(shader, shaderTerreno, terrenoModel, shaderAlbero, alberoModel);
+        renderScene(shader, albero, terreno, erba);
 
         
         // render Depth map to quad for visual debugging
@@ -295,20 +309,17 @@ int main()
 
 // renders the 3D scene
 // --------------------
-void renderScene(Shader& shader, Shader& terreno, Model& modelTerreno, Shader& shaderAlbero, Model& modelAlbero)
+void renderScene(Shader& shader, DrawableObj albero, DrawableObj terreno, DrawableObj erba)
 {   
 
     //floor
-    glm::mat4 model = glm::mat4(1.0f);
-    model = glm::translate(model, glm::vec3(0.0f, -0.2f, 0.0f)); // translate it down so it's at the center of the scene
-    model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));	// it's a bit too big for our scene, so scale it down
-    terreno.use();
-    terreno.setMat4("model", model);
-    modelTerreno.Draw(terreno);
+    terreno.traslate(glm::vec3(0.0f, -0.2f, 0.0f));
+    terreno.scale(glm::vec3(1.0f, 1.0f, 1.0f));
+    terreno.Draw();
     
     // cubes
     shader.use();
-    model = glm::mat4(1.0f);
+    glm::mat4 model = glm::mat4(1.0f);
     model = glm::translate(model, glm::vec3(0.0f, 1.5f, 0.0));
     model = glm::scale(model, glm::vec3(0.5f));
     shader.setMat4("model", model);
@@ -327,14 +338,15 @@ void renderScene(Shader& shader, Shader& terreno, Model& modelTerreno, Shader& s
     shader.setMat4("model", model);
     renderCube();
 
-    //albero
-    model = glm::mat4(1.0f);
-    model = glm::translate(model, glm::vec3(0.0f, -0.2f, 0.0f)); // translate it down so it's at the center of the scene
-    model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));	// it's a bit too big for our scene, so scale it down
-    shaderAlbero.use();
-    shaderAlbero.setMat4("model", model);
-    modelAlbero.Draw(shaderAlbero);
+    //erba
+    erba.traslate(glm::vec3(0.0f, -0.2f, 0.0f));
+    erba.scale(glm::vec3(1.0f, 1.0f, 1.0f));
+    erba.Draw();
 
+    //albero
+    albero.traslate(glm::vec3(0.0f, -0.2f, 0.0f));
+    albero.scale(glm::vec3(1.0f, 1.0f, 1.0f));
+    albero.Draw();
 }
 
 

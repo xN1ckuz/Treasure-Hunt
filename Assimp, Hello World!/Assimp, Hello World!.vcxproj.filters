@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files\Mondo">
+      <UniqueIdentifier>{ecdc559a-8f34-46e5-82d0-242e3fafba9f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -79,6 +82,12 @@
     </ClInclude>
     <ClInclude Include="render_text.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Terrain.h">
+      <Filter>Header Files\Mondo</Filter>
+    </ClInclude>
+    <ClInclude Include="DrawableObj.h">
+      <Filter>Header Files\Mondo</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
