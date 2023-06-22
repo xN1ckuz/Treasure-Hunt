@@ -2,8 +2,11 @@
 
 #include <iostream>
 #include "DrawableObj.h"
+#include "kdtree.h"
+#include "TriangoloPt.h"
 
 using namespace std;
+using namespace kd;
 
 class Terrain: public DrawableObj {
 	public:
@@ -12,10 +15,22 @@ class Terrain: public DrawableObj {
 			setModel(modelDirectory);
 			setIdentityTrasf();
 			loadVerticesForWalk(modelDirectory);
+			alberoKD.costruisciAlbero(convertMapToTrPt());
+			minMaxValues = getMinMaxXZFromMap();
 		}
 
-		glm::vec3 updateCameraPositionOnMap(glm::vec3 posCamera, float offset) {
-			MinMaxValues minMaxValues = getMinMaxXZFromMap();
+		vector<TriangoloPt> convertMapToTrPt() {
+			vector<TriangoloPt> listaTrangoloPt;
+			for (int i = 0; i < mappaTriangoloVertici.size(); i++) {
+				std::vector<Vertex> listaVertTriangolo = mappaTriangoloVertici[i];
+				TriangoloPt triangoloPt = TriangoloPt(listaVertTriangolo[0].Position, listaVertTriangolo[1].Position, listaVertTriangolo[2].Position);
+				listaTrangoloPt.push_back(triangoloPt);
+			}
+			return listaTrangoloPt;
+		}
+
+		glm::vec3 updateCameraPositionOnMap(glm::vec3 posCamera, float offset, bool tutti) {
+			//MinMaxValues minMaxValues = getMinMaxXZFromMap();
 			if (posCamera.x < minMaxValues.minX) {
 				posCamera.x = minMaxValues.minX + 0.3;
 			}
@@ -26,52 +41,43 @@ class Terrain: public DrawableObj {
 				posCamera.z = minMaxValues.minZ + 0.3;
 			}
 			if (posCamera.z > minMaxValues.maxZ) {
-				posCamera.z = minMaxValues.maxZ - 0.3;
+				posCamera.z = minMaxValues.maxZ - 0.3; 
 			}
 
-			for (int i = 0; i < mappaTriangoloVertici.size(); i++) {
-				std::vector<Vertex> listaVertTriangolo = mappaTriangoloVertici[i];
+			TriangoloPt puntoCamera(glm::vec3 (posCamera.x, posCamera.y - offset, posCamera.z));
 
-				//conversione in 2D
-				Vertex a = listaVertTriangolo[0];
-				a.Position.y = 0;
-				Vertex b = listaVertTriangolo[1];
-				b.Position.y = 0;
-				Vertex c = listaVertTriangolo[2];
-				c.Position.y = 0;
-				glm::vec3 cam2d(posCamera.x, 0.0, posCamera.z);
+			vector<TriangoloPt> vicino;
+			if (tutti == true) {
+				vicino = alberoKD.getPuntiEntroRaggio(puntoCamera, 8);
+			}
+			else {
+				vicino = alberoKD.getPuntiEntroRaggio(puntoCamera, 0.50);
+			}
+			for (int i = 0; i < vicino.size(); i++) {
 
-				if (isPointInsideTriangle(cam2d, a.Position, b.Position, c.Position)) {
-					/*cout << "Sono in un triangolo" << endl;*/
+				//cout << "Triangolo " << i + 1 << endl;
+				float y = getYOnPlaneFromXZ(vicino[i].listaVertici[0], vicino[i].listaVertici[1], vicino[i].listaVertici[2], posCamera.x, posCamera.z);
 
-					float y = getYOnPlaneFromXZ(listaVertTriangolo[0].Position, listaVertTriangolo[1].Position, listaVertTriangolo[2].Position, posCamera.x, posCamera.z);
+				if (isPointInsideTriangle(glm::vec3(posCamera.x, y, posCamera.z), vicino[i].listaVertici[0], vicino[i].listaVertici[1], vicino[i].listaVertici[2])) {
 					posCamera.y = y + offset;
 				}
 			}
+			/*cout << "punto: (" << posCamera.x << ", " << posCamera.y << ", " << posCamera.z << ")" << endl;*/
 			return posCamera;
 		}
 
-		//Restituisce la lista di tutti i vertici della mesh
-		std::vector<Vertex> getVerticesFromMap() {
-			std::vector<Vertex> listaVertici;
-			for (int i = 0; i < mappaTriangoloVertici.size(); i++) {
-				std::vector<Vertex> listaVertTriangolo = mappaTriangoloVertici[i];
-				listaVertici.push_back(listaVertTriangolo[0]);
-				listaVertici.push_back(listaVertTriangolo[1]);
-				listaVertici.push_back(listaVertTriangolo[2]);
-			}
-			return listaVertici;
-		}
-
 	private:
-		map<int, vector<Vertex>> mappaTriangoloVertici;
-
 		struct MinMaxValues {
 			float minX;
 			float maxX;
 			float minZ;
 			float maxZ;
 		};
+
+
+		map<int, vector<Vertex>> mappaTriangoloVertici;
+		AlberoKD <TriangoloPt> alberoKD = AlberoKD <TriangoloPt>();
+		MinMaxValues minMaxValues;
 
 		void loadVerticesForWalk(string modelDir) {
 
@@ -100,7 +106,19 @@ class Terrain: public DrawableObj {
 			}
 		}
 
-		
+
+		//Restituisce la lista di tutti i vertici della mesh
+		std::vector<Vertex> getVerticesFromMap() {
+			std::vector<Vertex> listaVertici;
+			for (int i = 0; i < mappaTriangoloVertici.size(); i++) {
+				std::vector<Vertex> listaVertTriangolo = mappaTriangoloVertici[i];
+				listaVertici.push_back(listaVertTriangolo[0]);
+				listaVertici.push_back(listaVertTriangolo[1]);
+				listaVertici.push_back(listaVertTriangolo[2]);
+			}
+			return listaVertici;
+		}
+
 		// Dati un punto e un triangolo rappresentato dai suoi tre vertici, questa funzione restituisce true se il punto è all'interno del triangolo, false altrimenti
 		bool isPointInsideTriangle(glm::vec3 p, glm::vec3 a, glm::vec3 b, glm::vec3 c) {
 			// Calcoliamo le normali dei tre sottotriangoli che si ottengono aggiungendo il punto p ai tre vertici del triangolo

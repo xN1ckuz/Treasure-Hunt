@@ -110,7 +110,8 @@ int main()
     DrawableObj albero = DrawableObj("resources/models/redwood_01.obj");
 
     //Camera con walk
-    camera = Camera(&terreno,terreno.updateCameraPositionOnMap(glm::vec3(0.0f, 0.0f, 3.0f),2));
+    camera = Camera(&terreno,terreno.updateCameraPositionOnMap(glm::vec3(0.0f, 0.0f, 0.0f),2,true));
+    //camera = Camera(glm::vec3(0.0f, 0.0f, 3.0f));
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
@@ -182,7 +183,8 @@ int main()
 
     // lighting info
     // -------------
-    glm::vec3 lightPos(-2.0f, 10.5f, -6.5f);
+    glm::vec3 lightPos(-9.8f, 24.2f, -17.0f);
+    //glm::vec3 lightPos(-2.0f, 4.0f, -1.0f);
 
     // render loop
     // -----------
@@ -203,6 +205,12 @@ int main()
         //lightPos.z = cos(glfwGetTime()) * 2.0f;
         //lightPos.y = 2.0 + cos(glfwGetTime()) * 1.0f;
 
+        /*lightPos.x = camera.Position.x;
+        lightPos.z = camera.Position.z;
+        lightPos.y = camera.Position.y;*/
+
+        //cout << "Luce: "<< "Pos x: " << lightPos.x << "Pos y: " << lightPos.y << "Pos z: " << lightPos.z << endl;
+
         // render
         // ------
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
@@ -212,7 +220,7 @@ int main()
         // --------------------------------------------------------------
         glm::mat4 lightProjection, lightView;
         glm::mat4 lightSpaceMatrix;
-        float near_plane = 1.0f, far_plane = 100.5f;
+        float near_plane = 1.0f, far_plane = 50.5f;
         //lightProjection = glm::perspective(glm::radians(45.0f), (GLfloat)SHADOW_WIDTH / (GLfloat)SHADOW_HEIGHT, near_plane, far_plane); // note that if you use a perspective projection matrix you'll have to change the light position as the current light position isn't enough to reflect the whole scene
         lightProjection = glm::ortho(-20.0f, 20.0f, -20.0f, 20.0f, near_plane, far_plane);
         lightView = glm::lookAt(lightPos, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
@@ -338,14 +346,39 @@ void renderScene(Shader& shader, DrawableObj albero, DrawableObj terreno, Drawab
     shader.setMat4("model", model);
     renderCube();
 
+    //Ombra
+    model = glm::mat4(1.0f);
+    model = glm::translate(model, glm::vec3(-20.0f, 0.0f, -20.0));
+    model = glm::scale(model, glm::vec3(0.25));
+    shader.setMat4("model", model);
+    renderCube();
+
+    model = glm::mat4(1.0f);
+    model = glm::translate(model, glm::vec3(20.0f, 0.0f, -20.0));
+    model = glm::scale(model, glm::vec3(0.25));
+    shader.setMat4("model", model);
+    renderCube();
+
+    model = glm::mat4(1.0f);
+    model = glm::translate(model, glm::vec3(20.0f, 0.0f, 20.0));
+    model = glm::scale(model, glm::vec3(0.25));
+    shader.setMat4("model", model);
+    renderCube();
+
+    model = glm::mat4(1.0f);
+    model = glm::translate(model, glm::vec3(-20.0f, 0.0f, 20.0));
+    model = glm::scale(model, glm::vec3(0.25));
+    shader.setMat4("model", model);
+    renderCube();
+
     //erba
-    erba.traslate(glm::vec3(0.0f, -0.2f, 0.0f));
-    erba.scale(glm::vec3(1.0f, 1.0f, 1.0f));
-    erba.Draw();
+    //erba.traslate(glm::vec3(0.0f, -0.2f, 0.0f));
+    //erba.scale(glm::vec3(1.0f, 1.0f, 1.0f));
+    //erba.Draw();
 
     //albero
     albero.traslate(glm::vec3(0.0f, -0.2f, 0.0f));
-    albero.scale(glm::vec3(1.0f, 1.0f, 1.0f));
+    albero.scale(glm::vec3(0.5f, 0.3f, 0.5f));
     albero.Draw();
 }
 

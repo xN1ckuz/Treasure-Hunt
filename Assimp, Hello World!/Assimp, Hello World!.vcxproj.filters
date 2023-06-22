@@ -89,5 +89,11 @@
     <ClInclude Include="DrawableObj.h">
       <Filter>Header Files\Mondo</Filter>
     </ClInclude>
+    <ClInclude Include="kdtree.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TriangoloPt.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
