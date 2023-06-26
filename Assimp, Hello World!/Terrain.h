@@ -51,7 +51,7 @@ class Terrain: public DrawableObj {
 				vicino = alberoKD.getPuntiEntroRaggio(puntoCamera, 8);
 			}
 			else {
-				vicino = alberoKD.getPuntiEntroRaggio(puntoCamera, 0.50);
+				vicino = alberoKD.getPuntiEntroRaggio(puntoCamera, 2.2);
 			}
 			for (int i = 0; i < vicino.size(); i++) {
 

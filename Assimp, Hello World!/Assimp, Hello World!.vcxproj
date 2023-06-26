@@ -186,6 +186,7 @@
     <ClInclude Include="camera.h" />
     <ClInclude Include="DrawableObj.h" />
     <ClInclude Include="kdtree.h" />
+    <ClInclude Include="ShadowBox.h" />
     <ClInclude Include="Terrain.h" />
     <ClInclude Include="mesh.h" />
     <ClInclude Include="model.h" />

@@ -12,6 +12,7 @@
 
 #include "DrawableObj.h"
 #include "Terrain.h"
+#include "ShadowBox.h"
 
 #include <iostream>
 
@@ -26,14 +27,19 @@ void renderQuad();
 void calculateFPS();
 
 // settings
-const unsigned int SCR_WIDTH = 1920;
-const unsigned int SCR_HEIGHT = 1080;
+//const unsigned int SCR_WIDTH = 1920;
+//const unsigned int SCR_HEIGHT = 1080;
+
+const unsigned int SCR_WIDTH = 1280;
+const unsigned int SCR_HEIGHT = 720;
 
 // camera
 Camera camera;
 float lastX = (float)SCR_WIDTH / 2.0;
 float lastY = (float)SCR_HEIGHT / 2.0;
 bool firstMouse = true;
+float NEAR_PLANE = 0.1;
+float FAR_PLANE = 100;
 
 // timing
 float deltaTime = 0.0f;
@@ -48,8 +54,19 @@ double previousTime = 0;
 double timeInterval = 0;
 unsigned int fps = 0;
 
+// lighting info
+// -------------
+glm::vec3 lightPos(-50000.0f, 34000.2f, 0.0f);
+//glm::vec3 lightPos(-2.0f, 4.0f, -1.0f);
+
+//Shadow
+float SHADOW_DISTANCE = 10;
+float OFFSET = 10;
+ShadowBox shadowBox = ShadowBox(&camera, lightPos, SCR_WIDTH, SCR_HEIGHT, NEAR_PLANE, FAR_PLANE, SHADOW_DISTANCE, OFFSET);
+
+
 int main()
-{
+{   
     // glfw: initialize and configure
     // ------------------------------
     glfwInit();
@@ -181,11 +198,6 @@ int main()
     debugDepthQuad.use();
     debugDepthQuad.setInt("depthMap", 4);
 
-    // lighting info
-    // -------------
-    glm::vec3 lightPos(-9.8f, 24.2f, -17.0f);
-    //glm::vec3 lightPos(-2.0f, 4.0f, -1.0f);
-
     // render loop
     // -----------
     while (!glfwWindowShouldClose(window))
@@ -209,6 +221,7 @@ int main()
         lightPos.z = camera.Position.z;
         lightPos.y = camera.Position.y;*/
 
+        cout << "Camera: "<< "Pos x: " << camera.Position.x << "Pos y: " << camera.Position.y << "Pos z: " << camera.Position.z << endl;
         //cout << "Luce: "<< "Pos x: " << lightPos.x << "Pos y: " << lightPos.y << "Pos z: " << lightPos.z << endl;
 
         // render
@@ -218,13 +231,19 @@ int main()
 
         // 1. render depth of scene to texture (from light's perspective)
         // --------------------------------------------------------------
-        glm::mat4 lightProjection, lightView;
-        glm::mat4 lightSpaceMatrix;
-        float near_plane = 1.0f, far_plane = 50.5f;
-        //lightProjection = glm::perspective(glm::radians(45.0f), (GLfloat)SHADOW_WIDTH / (GLfloat)SHADOW_HEIGHT, near_plane, far_plane); // note that if you use a perspective projection matrix you'll have to change the light position as the current light position isn't enough to reflect the whole scene
-        lightProjection = glm::ortho(-20.0f, 20.0f, -20.0f, 20.0f, near_plane, far_plane);
-        lightView = glm::lookAt(lightPos, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
-        lightSpaceMatrix = lightProjection * lightView;
+        //glm::mat4 lightProjection, lightView;
+        //glm::mat4 lightSpaceMatrix;
+        //float near_plane = 1.0f, far_plane = 50.5f;
+        ////lightProjection = glm::perspective(glm::radians(45.0f), (GLfloat)SHADOW_WIDTH / (GLfloat)SHADOW_HEIGHT, near_plane, far_plane); // note that if you use a perspective projection matrix you'll have to change the light position as the current light position isn't enough to reflect the whole scene
+        //lightProjection = glm::ortho(-20.0f, 20.0f, -20.0f, 20.0f, near_plane, far_plane);
+        //lightView = glm::lookAt(lightPos, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
+        //lightSpaceMatrix = lightProjection * lightView;
+        shadowBox.update();
+        glm::mat4 lightSpaceMatrix = shadowBox.getOrthoProjectionMatrix() * shadowBox.getLightViewMatrix();
+        shadowBox.debugVerticesLight();
+        shadowBox.debugVerticesCamera();
+        //shadowBox.debugMinMaxValues();
+        
 
         // render scene from light's point of view
         simpleDepthShader.use();
@@ -290,8 +309,8 @@ int main()
         // render Depth map to quad for visual debugging
         // ---------------------------------------------
         //debugDepthQuad.use();
-        //debugDepthQuad.setFloat("near_plane", near_plane);
-        //debugDepthQuad.setFloat("far_plane", far_plane);
+        //debugDepthQuad.setFloat("near_plane", NEAR_PLANE);
+        //debugDepthQuad.setFloat("far_plane", FAR_PLANE);
         //glActiveTexture(GL_TEXTURE4);
         //glBindTexture(GL_TEXTURE_2D, depthMap);
         //renderQuad();
@@ -372,12 +391,12 @@ void renderScene(Shader& shader, DrawableObj albero, DrawableObj terreno, Drawab
     renderCube();
 
     //erba
-    //erba.traslate(glm::vec3(0.0f, -0.2f, 0.0f));
-    //erba.scale(glm::vec3(1.0f, 1.0f, 1.0f));
-    //erba.Draw();
+    erba.traslate(glm::vec3(0.0f, -0.2f, 0.0f));
+    erba.scale(glm::vec3(1.0f, 1.0f, 1.0f));
+    erba.Draw();
 
     //albero
-    albero.traslate(glm::vec3(0.0f, -0.2f, 0.0f));
+    albero.traslate(glm::vec3(0.0f, -7.20f, 0.0f));
     albero.scale(glm::vec3(0.5f, 0.3f, 0.5f));
     albero.Draw();
 }
