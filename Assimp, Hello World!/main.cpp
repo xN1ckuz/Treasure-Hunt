@@ -76,11 +76,11 @@ float skyboxVertices[] = {
 };
 
 // settings
-const unsigned int SCR_WIDTH = 1920;
-const unsigned int SCR_HEIGHT = 1080;
+//const unsigned int SCR_WIDTH = 1920;
+//const unsigned int SCR_HEIGHT = 1080;
 
-//const unsigned int SCR_WIDTH = 1280;
-//const unsigned int SCR_HEIGHT = 720;
+const unsigned int SCR_WIDTH = 1366;
+const unsigned int SCR_HEIGHT = 768;
 
 // camera
 Camera camera;
@@ -307,7 +307,7 @@ int main()
         glm::mat4 lightSpaceMatrix;
         float ar = (float)SCR_WIDTH / (float)SCR_HEIGHT;
         float fov = glm::radians(camera.Zoom);
-        float nearDist = 0.01f;
+        float nearDist = 0.001f;
         float farDist = 80.0f;
         float Hnear = 2 * tan(fov / 2) * nearDist;
         float Wnear = Hnear * ar;
