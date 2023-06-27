@@ -1,10 +1,13 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include "stb_image.h"
+#include <array>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/string_cast.hpp>
 
 #include "shader_m.h"
 #include "camera.h"
@@ -25,13 +28,59 @@ void renderScene(Shader& shader, DrawableObj albero, DrawableObj terreno, Drawab
 void renderCube();
 void renderQuad();
 void calculateFPS();
+unsigned int loadCubemap(vector<std::string> faces);
+
+float skyboxVertices[] = {
+    // positions          
+    -1.0f,  1.0f, -1.0f,
+    -1.0f, -1.0f, -1.0f,
+     1.0f, -1.0f, -1.0f,
+     1.0f, -1.0f, -1.0f,
+     1.0f,  1.0f, -1.0f,
+    -1.0f,  1.0f, -1.0f,
+
+    -1.0f, -1.0f,  1.0f,
+    -1.0f, -1.0f, -1.0f,
+    -1.0f,  1.0f, -1.0f,
+    -1.0f,  1.0f, -1.0f,
+    -1.0f,  1.0f,  1.0f,
+    -1.0f, -1.0f,  1.0f,
+
+     1.0f, -1.0f, -1.0f,
+     1.0f, -1.0f,  1.0f,
+     1.0f,  1.0f,  1.0f,
+     1.0f,  1.0f,  1.0f,
+     1.0f,  1.0f, -1.0f,
+     1.0f, -1.0f, -1.0f,
+
+    -1.0f, -1.0f,  1.0f,
+    -1.0f,  1.0f,  1.0f,
+     1.0f,  1.0f,  1.0f,
+     1.0f,  1.0f,  1.0f,
+     1.0f, -1.0f,  1.0f,
+    -1.0f, -1.0f,  1.0f,
+
+    -1.0f,  1.0f, -1.0f,
+     1.0f,  1.0f, -1.0f,
+     1.0f,  1.0f,  1.0f,
+     1.0f,  1.0f,  1.0f,
+    -1.0f,  1.0f,  1.0f,
+    -1.0f,  1.0f, -1.0f,
+
+    -1.0f, -1.0f, -1.0f,
+    -1.0f, -1.0f,  1.0f,
+     1.0f, -1.0f, -1.0f,
+     1.0f, -1.0f, -1.0f,
+    -1.0f, -1.0f,  1.0f,
+     1.0f, -1.0f,  1.0f
+};
 
 // settings
-//const unsigned int SCR_WIDTH = 1920;
-//const unsigned int SCR_HEIGHT = 1080;
+const unsigned int SCR_WIDTH = 1920;
+const unsigned int SCR_HEIGHT = 1080;
 
-const unsigned int SCR_WIDTH = 1280;
-const unsigned int SCR_HEIGHT = 720;
+//const unsigned int SCR_WIDTH = 1280;
+//const unsigned int SCR_HEIGHT = 720;
 
 // camera
 Camera camera;
@@ -56,12 +105,11 @@ unsigned int fps = 0;
 
 // lighting info
 // -------------
-glm::vec3 lightPos(-50000.0f, 34000.2f, 0.0f);
-//glm::vec3 lightPos(-2.0f, 4.0f, -1.0f);
+glm::vec3 lightPos(-4.0f, 150.0f, 70.0f);
 
 //Shadow
-float SHADOW_DISTANCE = 10;
-float OFFSET = 10;
+float SHADOW_DISTANCE = 100;
+float OFFSET = 0.0001;
 ShadowBox shadowBox = ShadowBox(&camera, lightPos, SCR_WIDTH, SCR_HEIGHT, NEAR_PLANE, FAR_PLANE, SHADOW_DISTANCE, OFFSET);
 
 
@@ -119,6 +167,7 @@ int main()
     Shader debugDepthQuad("debug_quad.vs", "debug_quad_depth.fs");
     Shader shaderWithoutAlpha("model_loading.vs", "model_loading.fs");
     Shader shaderWithAlpha("model_loading.vs", "model_loading_alpha.fs");
+    Shader skyboxShader("skybox.vs", "skybox.fs");
 
     //load drowables
     //----------------
@@ -157,14 +206,35 @@ int main()
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
     glBindVertexArray(0);
 
+    // skybox VAO
+    unsigned int skyboxVAO, skyboxVBO;
+    glGenVertexArrays(1, &skyboxVAO);
+    glGenBuffers(1, &skyboxVBO);
+    glBindVertexArray(skyboxVAO);
+    glBindBuffer(GL_ARRAY_BUFFER, skyboxVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), &skyboxVertices, GL_STATIC_DRAW);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+
     // load textures
     // -------------
     unsigned int woodTexture = loadTexture("resources/textures/wood.png");
 
+    vector<std::string> faces
+    {
+        "resources/skybox/right.jpg",
+        "resources/skybox/left.jpg",
+        "resources/skybox/top.jpg",
+        "resources/skybox/bottom.jpg",
+        "resources/skybox/front.jpg",
+        "resources/skybox/back.jpg"
+    };
+    unsigned int cubemapTexture = loadCubemap(faces);
+
     // configure depth map FBO
     // -----------------------
     //const unsigned int SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
-    const unsigned int SHADOW_WIDTH = 4096, SHADOW_HEIGHT = 4096;
+    const unsigned int SHADOW_WIDTH = 10240, SHADOW_HEIGHT = 10240;
     unsigned int depthMapFBO;
     glGenFramebuffers(1, &depthMapFBO);
     // create depth texture
@@ -197,6 +267,8 @@ int main()
     shaderWithAlpha.setInt("shadowMap", 4);
     debugDepthQuad.use();
     debugDepthQuad.setInt("depthMap", 4);
+    skyboxShader.use();
+    skyboxShader.setInt("skybox", 0);
 
     // render loop
     // -----------
@@ -221,7 +293,7 @@ int main()
         lightPos.z = camera.Position.z;
         lightPos.y = camera.Position.y;*/
 
-        cout << "Camera: "<< "Pos x: " << camera.Position.x << "Pos y: " << camera.Position.y << "Pos z: " << camera.Position.z << endl;
+        //cout << "Camera: "<< "Pos x: " << camera.Position.x << "Pos y: " << camera.Position.y << "Pos z: " << camera.Position.z << endl;
         //cout << "Luce: "<< "Pos x: " << lightPos.x << "Pos y: " << lightPos.y << "Pos z: " << lightPos.z << endl;
 
         // render
@@ -229,21 +301,100 @@ int main()
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        // 1. render depth of scene to texture (from light's perspective)
+        // 1° pass - draw first skybox with depth write disabled
+        skyboxShader.use();
+        glm::mat4 view = glm::mat4(glm::mat3(camera.GetViewMatrix())); // remove translation from the view matrix
+        //glm::mat4 view = glm::mat4(camera.GetViewMatrix()); // remove translation from the view matrix
+        glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+        skyboxShader.setMat4("view", view);
+        skyboxShader.setMat4("projection", projection);
+        // skybox cube
+        glBindVertexArray(skyboxVAO);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
+        glDepthMask(GL_FALSE);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        glDepthMask(GL_TRUE);
+        glBindVertexArray(0);
+
+        // 2. render depth of scene to texture (from light's perspective)
         // --------------------------------------------------------------
-        //glm::mat4 lightProjection, lightView;
-        //glm::mat4 lightSpaceMatrix;
-        //float near_plane = 1.0f, far_plane = 50.5f;
-        ////lightProjection = glm::perspective(glm::radians(45.0f), (GLfloat)SHADOW_WIDTH / (GLfloat)SHADOW_HEIGHT, near_plane, far_plane); // note that if you use a perspective projection matrix you'll have to change the light position as the current light position isn't enough to reflect the whole scene
-        //lightProjection = glm::ortho(-20.0f, 20.0f, -20.0f, 20.0f, near_plane, far_plane);
-        //lightView = glm::lookAt(lightPos, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
-        //lightSpaceMatrix = lightProjection * lightView;
-        shadowBox.update();
-        glm::mat4 lightSpaceMatrix = shadowBox.getOrthoProjectionMatrix() * shadowBox.getLightViewMatrix();
-        shadowBox.debugVerticesLight();
-        shadowBox.debugVerticesCamera();
+        glm::mat4 lightProjection, lightView;
+        glm::mat4 lightSpaceMatrix;
+        float ar = (float)SCR_WIDTH / (float)SCR_HEIGHT;
+        float fov = glm::radians(camera.Zoom);
+        float nearDist = 0.01f;
+        float farDist = 80.0f;
+        float Hnear = 2 * tan(fov / 2) * nearDist;
+        float Wnear = Hnear * ar;
+        float Hfar = 2 * tan(fov / 2) * farDist;
+        float Wfar = Hfar * ar;
+        glm::vec3 centerFar = camera.Position + camera.Front * farDist;
+        glm::vec3 topLeftFar = centerFar + (camera.Up * Hfar / 2.0f) - (camera.Right * Wfar / 2.0f);
+        glm::vec3 topRightFar = centerFar + (camera.Up * Hfar / 2.0f) + (camera.Right * Wfar / 2.0f);
+        glm::vec3 bottomLeftFar = centerFar - (camera.Up * Hfar / 2.0f) - (camera.Right * Wfar / 2.0f);
+        glm::vec3 bottomRightFar = centerFar - (camera.Up * Hfar / 2.0f) + (camera.Right * Wfar / 2.0f);
+
+        glm::vec3 centerNear = camera.Position + camera.Front * nearDist;
+
+        glm::vec3 topLeftNear = centerNear + (camera.Up * Hnear / 2.0f) - (camera.Right * Wnear / 2.0f);
+        glm::vec3 topRightNear = centerNear + (camera.Up * Hnear / 2.0f) + (camera.Right * Wnear / 2.0f);
+        glm::vec3 bottomLeftNear = centerNear - (camera.Up * Hnear / 2.0f) - (camera.Right * Wnear / 2.0f);
+        glm::vec3 bottomRightNear = centerNear - (camera.Up * Hnear / 2.0f) + (camera.Right * Wnear / 2.0f);
+
+        glm::vec3 frustumCenter = (centerFar - centerNear) * 0.5f;
+
+        lightView = glm::lookAt(normalize(lightPos), glm::vec3(0, 0, 0), glm::vec3(0, 0, 1));
+
+        std::array<glm::vec3, 8> frustumToLightView {
+            lightView* glm::vec4(bottomRightNear, 1.0f),
+            lightView* glm::vec4(topRightNear, 1.0f),
+            lightView* glm::vec4(bottomLeftNear, 1.0f),
+            lightView* glm::vec4(topLeftNear, 1.0f),
+            lightView* glm::vec4(bottomRightFar, 1.0f),
+            lightView* glm::vec4(topRightFar, 1.0f),
+            lightView* glm::vec4(bottomLeftFar, 1.0f),
+            lightView* glm::vec4(topLeftFar, 1.0f)
+        };
+
+        // find max and min points to define a ortho matrix around
+        glm::vec3 min{ INFINITY, INFINITY, INFINITY };
+        glm::vec3 max{ -INFINITY, -INFINITY, -INFINITY };
+        for (unsigned int i = 0; i < frustumToLightView.size(); i++) {
+            if (frustumToLightView[i].x < min.x)
+                min.x = frustumToLightView[i].x;
+            if (frustumToLightView[i].y < min.y)
+                min.y = frustumToLightView[i].y;
+            if (frustumToLightView[i].z < min.z)
+                min.z = frustumToLightView[i].z;
+
+            if (frustumToLightView[i].x > max.x)
+                max.x = frustumToLightView[i].x;
+            if (frustumToLightView[i].y > max.y)
+                max.y = frustumToLightView[i].y;
+            if (frustumToLightView[i].z > max.z)
+                max.z = frustumToLightView[i].z;
+        }
+
+        float l = min.x;
+        float r = max.x;
+        float b = min.y;
+        float t = max.y;
+        // because max.z is positive and in NDC the positive z axis is 
+        // towards us so need to set it as the near plane flipped same for min.z.
+        float n = -max.z;
+        float f = -min.z;
+
+        // finally, set our ortho projection
+        // and create the light space view-projection matrix
+        lightProjection = glm::ortho(l, r, b, t, n, f);
+        lightSpaceMatrix = lightProjection * lightView;
+
+        //shadowBox.update();
+        //glm::mat4 lightSpaceMatrix = shadowBox.getOrthoProjectionMatrix() * shadowBox.getLightViewMatrix();
+        //shadowBox.debugVerticesLight();
+        //shadowBox.debugVerticesCamera();
         //shadowBox.debugMinMaxValues();
-        
 
         // render scene from light's point of view
         simpleDepthShader.use();
@@ -270,8 +421,10 @@ int main()
         // --------------------------------------------------------------
         glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
-        glm::mat4 view = camera.GetViewMatrix();
+        //glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+        //glm::mat4 view = camera.GetViewMatrix();
+        projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+        view = camera.GetViewMatrix();
 
         shaderWithoutAlpha.use();
         shaderWithoutAlpha.setMat4("view", view);
@@ -329,6 +482,8 @@ int main()
     // ------------------------------------------------------------------------
     glDeleteVertexArrays(1, &planeVAO);
     glDeleteBuffers(1, &planeVBO);
+    glDeleteVertexArrays(1, &skyboxVAO);
+    glDeleteBuffers(1, &skyboxVAO);
 
     glfwTerminate();
     return 0;
@@ -619,4 +774,34 @@ void calculateFPS() {
         //  Azzeriamo il contatore dei tempi
         frameCount = 0;
     }
+}
+
+unsigned int loadCubemap(vector<std::string> faces)
+{
+    unsigned int textureID;
+    glGenTextures(1, &textureID);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
+
+    int width, height, nrChannels;
+    for (unsigned int i = 0; i < faces.size(); i++)
+    {
+        unsigned char* data = stbi_load(faces[i].c_str(), &width, &height, &nrChannels, 0);
+        if (data)
+        {
+            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+            stbi_image_free(data);
+        }
+        else
+        {
+            std::cout << "Cubemap texture failed to load at path: " << faces[i] << std::endl;
+            stbi_image_free(data);
+        }
+    }
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+    return textureID;
 }

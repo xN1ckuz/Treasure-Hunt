@@ -55,6 +55,12 @@
     <None Include="shadow_mapping_depth.vs">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="skybox.fs">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="skybox.vs">
+      <Filter>Header Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">

@@ -175,6 +175,8 @@
     <None Include="shadow_mapping_depth.fs" />
     <None Include="shadow_mapping_depth.vs" />
     <None Include="shadow_mapping_depth_alpha.vs" />
+    <None Include="skybox.fs" />
+    <None Include="skybox.vs" />
     <None Include="text.fs" />
     <None Include="text.vs" />
   </ItemGroup>

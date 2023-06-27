@@ -7,6 +7,7 @@
 #include"camera.h"
 
 class ShadowBox {
+
 	public:
 
 		ShadowBox(Camera* cam, glm::vec3 lightPos, const unsigned int SCR_WIDTH, const unsigned int SCR_HEIGHT, float NEAR_PLANE, float FAR_PLANE, float SHADOW_DISTANCE, float OFFSET) {
@@ -272,9 +273,9 @@ class ShadowBox {
 
 		//Calcolo il centro della ShadowBox nel WorldSpace
 		glm::vec3 calculateCenter() {
-			float x = (boxMinMax.minX + boxMinMax.maxX) / 2.0f;
-			float y = (boxMinMax.minY + boxMinMax.maxY) / 2.0f;
-			float z = (boxMinMax.minZ + boxMinMax.maxZ) / 2.0f;
+			float x = ((boxMinMax.minX + boxMinMax.maxX) / 2.0f);
+			float y = ((boxMinMax.minY + boxMinMax.maxY) / 2.0f);
+			float z = ((boxMinMax.minZ + boxMinMax.maxZ) / 2.0f);
 			//cout << "center: (" << x << " , " << z << " , " << y << ")" << endl;
 			glm::vec4 cen(x, y, z, 1);
 			glm::mat4 lightView = glm::lookAt(lightPos, glm::normalize(glm::vec3(-lightPos.x, -lightPos.y, -lightPos.z)), glm::vec3(0.0, 1.0, 0.0));
