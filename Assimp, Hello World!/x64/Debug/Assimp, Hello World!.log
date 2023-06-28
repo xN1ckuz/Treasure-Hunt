@@ -1,46 +1,55 @@
-﻿  main.cpp
-E:\Desktop\Treasure-Hunt\Assimp, Hello World!\shader_m.h(60,36): warning C4101: 'e': variabile locale senza riferimenti
-E:\Desktop\Treasure-Hunt\Assimp, Hello World!\mesh.h(84,1): warning C4267: 'argomento': conversione da 'size_t' a 'GLsizei'. Possibile perdita di dati.
-E:\Desktop\Treasure-Hunt\Assimp, Hello World!\Terrain.h(35,37): warning C4244: '=': conversione da 'double' a 'T'. Possibile perdita di dati.
+﻿  glad.c
+  main.cpp
+D:\Projects\Treasure Hunt\Assimp, Hello World!\shader_m.h(60,36): warning C4101: 'e': variabile locale senza riferimenti
+D:\Projects\Treasure Hunt\Assimp, Hello World!\mesh.h(84,46): warning C4267: 'argomento': conversione da 'size_t' a 'GLsizei'. Possibile perdita di dati.
+D:\Projects\Treasure Hunt\Assimp, Hello World!\Terrain.h(46,37): warning C4244: '=': conversione da 'double' a 'T'. Possibile perdita di dati.
           with
           [
               T=float
           ]
-E:\Desktop\Treasure-Hunt\Assimp, Hello World!\Terrain.h(38,37): warning C4244: '=': conversione da 'double' a 'T'. Possibile perdita di dati.
+D:\Projects\Treasure Hunt\Assimp, Hello World!\Terrain.h(49,37): warning C4244: '=': conversione da 'double' a 'T'. Possibile perdita di dati.
           with
           [
               T=float
           ]
-E:\Desktop\Treasure-Hunt\Assimp, Hello World!\Terrain.h(41,37): warning C4244: '=': conversione da 'double' a 'T'. Possibile perdita di dati.
+D:\Projects\Treasure Hunt\Assimp, Hello World!\Terrain.h(52,37): warning C4244: '=': conversione da 'double' a 'T'. Possibile perdita di dati.
           with
           [
               T=float
           ]
-E:\Desktop\Treasure-Hunt\Assimp, Hello World!\Terrain.h(44,37): warning C4244: '=': conversione da 'double' a 'T'. Possibile perdita di dati.
+D:\Projects\Treasure Hunt\Assimp, Hello World!\Terrain.h(55,37): warning C4244: '=': conversione da 'double' a 'T'. Possibile perdita di dati.
           with
           [
               T=float
           ]
-E:\Desktop\Treasure-Hunt\Assimp, Hello World!\main.cpp(41,23): warning C4305: 'inizializzazione': troncamento da 'double' a 'float'
-E:\Desktop\Treasure-Hunt\Assimp, Hello World!\main.cpp(207,28): warning C4244: 'inizializzazione': conversione da 'double' a 'float'. Possibile perdita di dati.
-E:\Desktop\Treasure-Hunt\Assimp, Hello World!\main.cpp(543,17): warning C4244: '=': conversione da 'double' a 'float'. Possibile perdita di dati.
-E:\Desktop\Treasure-Hunt\Assimp, Hello World!\main.cpp(544,17): warning C4244: '=': conversione da 'double' a 'float'. Possibile perdita di dati.
-E:\Desktop\Treasure-Hunt\Assimp, Hello World!\main.cpp(548,19): warning C4244: 'inizializzazione': conversione da 'double' a 'float'. Possibile perdita di dati.
-E:\Desktop\Treasure-Hunt\Assimp, Hello World!\main.cpp(549,19): warning C4244: 'inizializzazione': conversione da 'double' a 'float'. Possibile perdita di dati.
-E:\Desktop\Treasure-Hunt\Assimp, Hello World!\main.cpp(551,13): warning C4244: '=': conversione da 'double' a 'float'. Possibile perdita di dati.
-E:\Desktop\Treasure-Hunt\Assimp, Hello World!\main.cpp(552,13): warning C4244: '=': conversione da 'double' a 'float'. Possibile perdita di dati.
-E:\Desktop\Treasure-Hunt\Assimp, Hello World!\main.cpp(561,31): warning C4244: 'argomento': conversione da 'double' a 'float'. Possibile perdita di dati.
-E:\Desktop\Treasure-Hunt\Assimp, Hello World!\kdtree.h(224,1): warning C4267: 'argomento': conversione da 'size_t' a 'int'. Possibile perdita di dati.
-E:\Desktop\Treasure-Hunt\Assimp, Hello World!\kdtree.h(221,1): message : durante la compilazione della funzione membro 'double kd::AlberoKD<TriangoloPt>::calcolaDistanza(const PuntoT &,const PuntoT &)' di modello classe
+D:\Projects\Treasure Hunt\Assimp, Hello World!\Terrain.h(129,37): warning C4267: 'argomento': conversione da 'size_t' a '_Ty'. Possibile perdita di dati.
+          with
+          [
+              _Ty=unsigned int
+          ]
+D:\Projects\Treasure Hunt\Assimp, Hello World!\Terrain.h(160,29): warning C4267: '=': conversione da 'size_t' a 'unsigned int'. Possibile perdita di dati.
+D:\Projects\Treasure Hunt\Assimp, Hello World!\main.cpp(89,18): warning C4305: 'inizializzazione': troncamento da 'double' a 'float'
+D:\Projects\Treasure Hunt\Assimp, Hello World!\main.cpp(248,28): warning C4244: 'inizializzazione': conversione da 'double' a 'float'. Possibile perdita di dati.
+D:\Projects\Treasure Hunt\Assimp, Hello World!\main.cpp(576,17): warning C4244: '=': conversione da 'double' a 'float'. Possibile perdita di dati.
+D:\Projects\Treasure Hunt\Assimp, Hello World!\main.cpp(577,17): warning C4244: '=': conversione da 'double' a 'float'. Possibile perdita di dati.
+D:\Projects\Treasure Hunt\Assimp, Hello World!\main.cpp(581,19): warning C4244: 'inizializzazione': conversione da 'double' a 'float'. Possibile perdita di dati.
+D:\Projects\Treasure Hunt\Assimp, Hello World!\main.cpp(582,19): warning C4244: 'inizializzazione': conversione da 'double' a 'float'. Possibile perdita di dati.
+D:\Projects\Treasure Hunt\Assimp, Hello World!\main.cpp(584,13): warning C4244: '=': conversione da 'double' a 'float'. Possibile perdita di dati.
+D:\Projects\Treasure Hunt\Assimp, Hello World!\main.cpp(585,13): warning C4244: '=': conversione da 'double' a 'float'. Possibile perdita di dati.
+D:\Projects\Treasure Hunt\Assimp, Hello World!\main.cpp(594,31): warning C4244: 'argomento': conversione da 'double' a 'float'. Possibile perdita di dati.
+D:\Projects\Treasure Hunt\Assimp, Hello World!\kdtree.h(224,33): warning C4267: 'argomento': conversione da 'size_t' a 'int'. Possibile perdita di dati.
+D:\Projects\Treasure Hunt\Assimp, Hello World!\kdtree.h(220,23): message : durante la compilazione della funzione membro 'double kd::AlberoKD<TriangoloPt>::calcolaDistanza(const PuntoT &,const PuntoT &)' di modello classe
           with
           [
               PuntoT=TriangoloPt
           ]
-E:\Desktop\Treasure-Hunt\Assimp, Hello World!\kdtree.h(277,35): message : vedere il riferimento all'istanza 'double kd::AlberoKD<TriangoloPt>::calcolaDistanza(const PuntoT &,const PuntoT &)' della funzione modello di cui è in corso la compilazione
-          with
-          [
-              PuntoT=TriangoloPt
-          ]
-E:\Desktop\Treasure-Hunt\Assimp, Hello World!\Terrain.h(79,26): message : vedere il riferimento all'istanza 'kd::AlberoKD<TriangoloPt>' di modello classe di cui è in corso la compilazione
-  Assimp, Hello World!.vcxproj -> E:\Desktop\Treasure-Hunt\x64\Debug\Improved Shadow Mapping.exe
+D:\Projects\Treasure Hunt\Assimp, Hello World!\kdtree.h(277,35): message : vedere il primo riferimento a 'kd::AlberoKD<TriangoloPt>::calcolaDistanza' in 'kd::AlberoKD<TriangoloPt>::trovaPuntiEntroRaggioRicorsivo'
+D:\Projects\Treasure Hunt\Assimp, Hello World!\kdtree.h(88,43): message : vedere il primo riferimento a 'kd::AlberoKD<TriangoloPt>::trovaPuntiEntroRaggioRicorsivo' in 'kd::AlberoKD<TriangoloPt>::trovaPuntiEntroRaggio'
+D:\Projects\Treasure Hunt\Assimp, Hello World!\kdtree.h(108,25): message : vedere il primo riferimento a 'kd::AlberoKD<TriangoloPt>::trovaPuntiEntroRaggio' in 'kd::AlberoKD<TriangoloPt>::getPuntiEntroRaggio'
+D:\Projects\Treasure Hunt\Assimp, Hello World!\Terrain.h(62,12): message : vedere il primo riferimento a 'kd::AlberoKD<TriangoloPt>::getPuntiEntroRaggio' in 'Terrain::updateCameraPositionOnMap'
+D:\Projects\Treasure Hunt\Assimp, Hello World!\Terrain.h(91,26): message : vedere il riferimento all'istanza 'kd::AlberoKD<TriangoloPt>' di modello classe di cui è in corso la compilazione
+D:\Projects\Treasure Hunt\Assimp, Hello World!\kdtree.h(224,40): warning C4267: 'argomento': conversione da 'size_t' a 'int'. Possibile perdita di dati.
+D:\Projects\Treasure Hunt\Assimp, Hello World!\kdtree.h(224,49): warning C4267: 'argomento': conversione da 'size_t' a 'int'. Possibile perdita di dati.
+D:\Projects\Treasure Hunt\Assimp, Hello World!\kdtree.h(224,56): warning C4267: 'argomento': conversione da 'size_t' a 'int'. Possibile perdita di dati.
+  Assimp, Hello World!.vcxproj -> D:\Projects\Treasure Hunt\x64\Debug\Improved Shadow Mapping.exe
           1 file copiati.
