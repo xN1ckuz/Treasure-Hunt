@@ -54,11 +54,11 @@ void main()
 {   
  
     vec4 color = texture(texture_diffuse1, fs_in.TexCoords);
-    if(color.a == 0.0){
+    if(color.a < 0.5){
         discard;
     }else{
         vec3 normal = normalize(fs_in.Normal);
-        vec3 lightColor = vec3(1.0);
+        vec3 lightColor = vec3(0.5);
         // ambient
         vec3 ambient = 0.5 * color.rgb;
         // diffuse

@@ -9,6 +9,7 @@
 
 class DrawableObj {
 	public:
+
 		Model* model;
 
 		DrawableObj(string modelDirectory) {
@@ -55,7 +56,11 @@ class DrawableObj {
 			return model;
 		}
 
-	private:
-		Shader *shader;
+	protected:
+		Shader* shader;
 		glm::mat4 trasfMatrix;
+
+	private:
+
+		
 };

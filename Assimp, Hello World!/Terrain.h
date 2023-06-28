@@ -11,12 +11,24 @@ using namespace kd;
 class Terrain: public DrawableObj {
 	public:
 
-		Terrain (string modelDirectory) : DrawableObj(modelDirectory) {
+		Terrain (string modelDirectory, string textureDir) : DrawableObj(modelDirectory) {
 			setModel(modelDirectory);
 			setIdentityTrasf();
-			loadVerticesForWalk(modelDirectory);
+			loadModel(modelDirectory, VAOterreno, &IndexTerreno);
+			texture = loadtextureRepeat(textureDir.c_str());
 			alberoKD.costruisciAlbero(convertMapToTrPt());
 			minMaxValues = getMinMaxXZFromMap();
+		}
+
+		void Draw() {
+			shader->use();
+			shader->setMat4("model", trasfMatrix);
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, texture);
+			shader->setInt("texture_diffuse1", 0);
+			glBindVertexArray(VAOterreno);
+			glDrawElements(GL_TRIANGLES, IndexTerreno, GL_UNSIGNED_INT, 0);
+			setIdentityTrasf();
 		}
 
 		vector<TriangoloPt> convertMapToTrPt() {
@@ -30,7 +42,6 @@ class Terrain: public DrawableObj {
 		}
 
 		glm::vec3 updateCameraPositionOnMap(glm::vec3 posCamera, float offset, bool tutti) {
-			//MinMaxValues minMaxValues = getMinMaxXZFromMap();
 			if (posCamera.x < minMaxValues.minX) {
 				posCamera.x = minMaxValues.minX + 0.3;
 			}
@@ -67,6 +78,7 @@ class Terrain: public DrawableObj {
 		}
 
 	private:
+
 		struct MinMaxValues {
 			float minX;
 			float maxX;
@@ -74,16 +86,30 @@ class Terrain: public DrawableObj {
 			float maxZ;
 		};
 
-
+		unsigned int VAOterreno, IndexTerreno, texture;
 		map<int, vector<Vertex>> mappaTriangoloVertici;
 		AlberoKD <TriangoloPt> alberoKD = AlberoKD <TriangoloPt>();
 		MinMaxValues minMaxValues;
 
-		void loadVerticesForWalk(string modelDir) {
+		//Restituisce la lista di tutti i vertici della mesh
+		std::vector<Vertex> getVerticesFromMap() {
+			std::vector<Vertex> listaVertici;
+			for (int i = 0; i < mappaTriangoloVertici.size(); i++) {
+				std::vector<Vertex> listaVertTriangolo = mappaTriangoloVertici[i];
+				listaVertici.push_back(listaVertTriangolo[0]);
+				listaVertici.push_back(listaVertTriangolo[1]);
+				listaVertici.push_back(listaVertTriangolo[2]);
+			}
+			return listaVertici;
+		}
+
+		void loadModel(const std::string& filename, GLuint& VAO, unsigned int* sizeIndex) {
 
 			// Caricamento del modelloAssimp::Importer importer;
 			Assimp::Importer importer;
-			const aiScene* scene = importer.ReadFile(modelDir, aiProcess_Triangulate | aiProcess_FlipUVs);
+			const aiScene* scene = importer.ReadFile(filename, aiProcess_Triangulate | aiProcess_FlipUVs);
+
+			std::vector<GLuint> indices;
 
 			// Estrae i vertici e gli indici dal modello
 			for (unsigned int i = 0; i < scene->mNumMeshes; i++) {
@@ -100,23 +126,38 @@ class Terrain: public DrawableObj {
 							vertex.TexCoords = glm::vec2(mesh->mTextureCoords[0][index].x, mesh->mTextureCoords[0][index].y);
 						}
 						triangoloVertici.push_back(vertex);
+						indices.push_back(indices.size());
 					}
 					mappaTriangoloVertici[j] = triangoloVertici;
 				}
 			}
-		}
 
+			std::vector<Vertex> vertices = getVerticesFromMap();
 
-		//Restituisce la lista di tutti i vertici della mesh
-		std::vector<Vertex> getVerticesFromMap() {
-			std::vector<Vertex> listaVertici;
-			for (int i = 0; i < mappaTriangoloVertici.size(); i++) {
-				std::vector<Vertex> listaVertTriangolo = mappaTriangoloVertici[i];
-				listaVertici.push_back(listaVertTriangolo[0]);
-				listaVertici.push_back(listaVertTriangolo[1]);
-				listaVertici.push_back(listaVertTriangolo[2]);
-			}
-			return listaVertici;
+			// Crea i VBO e i VAO
+			GLuint VBO, EBO;
+			glGenVertexArrays(1, &VAO);
+			glGenBuffers(1, &VBO);
+			glGenBuffers(1, &EBO);
+			glBindVertexArray(VAO);
+			glBindBuffer(GL_ARRAY_BUFFER, VBO);
+			glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), &vertices[0], GL_STATIC_DRAW);
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+			glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint), &indices[0], GL_STATIC_DRAW);
+			glEnableVertexAttribArray(0);
+			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)0);
+			glEnableVertexAttribArray(1);
+			glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, Normal));
+			glEnableVertexAttribArray(2);
+			glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, TexCoords));
+			glBindVertexArray(0);
+
+			// Cleanup
+			glBindVertexArray(0);
+			glBindBuffer(GL_ARRAY_BUFFER, 0);
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+			*sizeIndex = indices.size();
 		}
 
 		// Dati un punto e un triangolo rappresentato dai suoi tre vertici, questa funzione restituisce true se il punto è all'interno del triangolo, false altrimenti
@@ -174,6 +215,43 @@ class Terrain: public DrawableObj {
 				}
 			}
 			return { minX, maxX, minZ, maxZ };
+		}
+
+		unsigned int loadtextureRepeat(char const* path)
+		{
+			unsigned int textureID;
+			glGenTextures(1, &textureID);
+
+			int width, height, nrComponents;
+			unsigned char* data = stbi_load(path, &width, &height, &nrComponents, 0);
+			if (data)
+			{
+				GLenum format;
+				if (nrComponents == 1)
+					format = GL_RED;
+				else if (nrComponents == 3)
+					format = GL_RGB;
+				else if (nrComponents == 4)
+					format = GL_RGBA;
+
+				glBindTexture(GL_TEXTURE_2D, textureID);
+				glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+				glGenerateMipmap(GL_TEXTURE_2D);
+
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); // for this tutorial: use GL_CLAMP_TO_EDGE to prevent semi-transparent borders. Due to interpolation it takes texels from next repeat 
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+				stbi_image_free(data);
+			}
+			else
+			{
+				std::cout << "Texture failed to load at path: " << path << std::endl;
+				stbi_image_free(data);
+			}
+
+			return textureID;
 		}
 
 };
