@@ -25,8 +25,7 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void processInput(GLFWwindow* window);
 unsigned int loadTexture(const char* path);
-void renderScene(Shader& shader, DrawableObjIstanced albero, DrawableObj terreno, DrawableObj erba, bool ombra);
-void renderCube();
+void renderScene(DrawableObjIstanced alberi1, DrawableObjIstanced alberi2, DrawableObj terreno, DrawableObj erba, bool ombra);
 void renderQuad();
 void calculateFPS();
 unsigned int loadCubemap(vector<std::string> faces);
@@ -79,10 +78,10 @@ float skyboxVertices[] = {
 // settings
 //const unsigned int SCR_WIDTH = 1920;
 //const unsigned int SCR_HEIGHT = 1080;
-//const unsigned int SCR_WIDTH = 1366;
-//const unsigned int SCR_HEIGHT = 768;
-const unsigned int SCR_WIDTH = 2560;
-const unsigned int SCR_HEIGHT = 1440;
+const unsigned int SCR_WIDTH = 1366;
+const unsigned int SCR_HEIGHT = 768;
+//const unsigned int SCR_WIDTH = 2560;
+//const unsigned int SCR_HEIGHT = 1440;
 
 // camera
 Camera camera;
@@ -161,7 +160,6 @@ int main()
 
     // build and compile shaders
     // -------------------------
-    Shader shader("shadow_mapping.vs", "shadow_mapping.fs");
     Shader simpleDepthShader("shadow_mapping_depth.vs", "shadow_mapping_depth.fs");
     Shader simpleDepthShaderInstanced("shadow_mapping_depth_instanced.vs", "shadow_mapping_depth.fs");
     Shader debugDepthQuad("debug_quad.vs", "debug_quad_depth.fs");
@@ -176,7 +174,8 @@ int main()
     DrawableObj erba = DrawableObj("resources/models/grass.obj");
     Terrain terreno = Terrain("resources/models/world.obj","resources/models/textures/terrain.jpg");
     //DrawableObj albero = DrawableObj("resources/models/redwood_01.obj");
-    DrawableObjIstanced alberi = DrawableObjIstanced("Posizioni.txt", "resources/models/redwood_01.obj");
+    DrawableObjIstanced alberi1 = DrawableObjIstanced("redwood_01.txt", "resources/models/redwood_01.obj");
+    DrawableObjIstanced alberi2 = DrawableObjIstanced("redwood_02.txt", "resources/models/redwood_02.obj");
 
     //Camera con walk
     camera = Camera(&terreno,terreno.updateCameraPositionOnMap(glm::vec3(0.0f, 0.0f, 0.0f),2,true));
@@ -194,8 +193,6 @@ int main()
 
     // load textures
     // -------------
-    unsigned int woodTexture = loadTexture("resources/textures/wood.png");
-
     vector<std::string> faces
     {
         "resources/skybox/right.jpg",
@@ -237,10 +234,6 @@ int main()
     // --------------------
     skyboxShader.use();
     skyboxShader.setInt("skybox", 0);
-
-    shader.use();
-    shader.setInt("diffuseTexture", 3);
-    shader.setInt("shadowMap", 4);
 
     shaderWithoutAlpha.use();
     shaderWithoutAlpha.setInt("shadowMap", 4);
@@ -288,16 +281,14 @@ int main()
 
         terreno.setShaders(&simpleDepthShader);
         erba.setShaders(&simpleDepthShader);
-        alberi.setShaders(&simpleDepthShaderInstanced);
-        //albero.setShaders(&simpleDepthShader);
+        alberi1.setShaders(&simpleDepthShaderInstanced);
+        alberi2.setShaders(&simpleDepthShaderInstanced);
 
         glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
         glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
         glClear(GL_DEPTH_BUFFER_BIT);
-        glActiveTexture(GL_TEXTURE3);
-        glBindTexture(GL_TEXTURE_2D, woodTexture);
 
-        renderScene(simpleDepthShader, alberi, terreno, erba, true);
+        renderScene(alberi1,alberi2, terreno, erba, true);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
         // reset viewport
@@ -349,21 +340,12 @@ int main()
 
         terreno.setShaders(&shaderWithoutAlpha);
         erba.setShaders(&shaderWithAlpha);
-        alberi.setShaders(&shaderWithAlphaInstanced);
-        //albero.setShaders(&shaderWithAlpha);
+        alberi1.setShaders(&shaderWithAlphaInstanced);
+        alberi2.setShaders(&shaderWithAlphaInstanced);
 
-        shader.use();
-        shader.setMat4("projection", projection);
-        shader.setMat4("view", view);
-        shader.setVec3("viewPos", camera.Position);
-        shader.setVec3("lightPos", lightPos);
-        shader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
-
-        glActiveTexture(GL_TEXTURE3);
-        glBindTexture(GL_TEXTURE_2D, woodTexture);
         glActiveTexture(GL_TEXTURE4);
         glBindTexture(GL_TEXTURE_2D, depthMap);
-        renderScene(shader, alberi, terreno, erba, false);
+        renderScene(alberi1, alberi2, terreno, erba, true);
 
         
         // render Depth map to quad for visual debugging
@@ -396,59 +378,13 @@ int main()
 
 // renders the 3D scene
 // --------------------
-void renderScene(Shader& shader, DrawableObjIstanced alberi, DrawableObj terreno, DrawableObj erba, bool ombra)
+void renderScene(DrawableObjIstanced alberi1, DrawableObjIstanced alberi2, DrawableObj terreno, DrawableObj erba, bool ombra)
 {   
 
     //floor
     terreno.traslate(glm::vec3(0.0f, -0.2f, 0.0f));
     terreno.scale(glm::vec3(1.0f, 1.0f, 1.0f));
     terreno.Draw();
-    
-    // cubes
-    shader.use();
-    glm::mat4 model = glm::mat4(1.0f);
-    model = glm::translate(model, glm::vec3(0.0f, 1.5f, 0.0));
-    model = glm::scale(model, glm::vec3(0.5f));
-    shader.setMat4("model", model);
-    renderCube();
-
-    model = glm::mat4(1.0f);
-    model = glm::translate(model, glm::vec3(2.0f, 0.0f, 1.0));
-    model = glm::scale(model, glm::vec3(0.5f));
-    shader.setMat4("model", model);
-    renderCube();
-
-    model = glm::mat4(1.0f);
-    model = glm::translate(model, glm::vec3(-1.0f, 0.0f, 2.0));
-    model = glm::rotate(model, glm::radians(60.0f), glm::normalize(glm::vec3(1.0, 0.0, 1.0)));
-    model = glm::scale(model, glm::vec3(0.25));
-    shader.setMat4("model", model);
-    renderCube();
-
-    //Ombra
-    model = glm::mat4(1.0f);
-    model = glm::translate(model, glm::vec3(-20.0f, 0.0f, -20.0));
-    model = glm::scale(model, glm::vec3(0.25));
-    shader.setMat4("model", model);
-    renderCube();
-
-    model = glm::mat4(1.0f);
-    model = glm::translate(model, glm::vec3(20.0f, 0.0f, -20.0));
-    model = glm::scale(model, glm::vec3(0.25));
-    shader.setMat4("model", model);
-    renderCube();
-
-    model = glm::mat4(1.0f);
-    model = glm::translate(model, glm::vec3(20.0f, 0.0f, 20.0));
-    model = glm::scale(model, glm::vec3(0.25));
-    shader.setMat4("model", model);
-    renderCube();
-
-    model = glm::mat4(1.0f);
-    model = glm::translate(model, glm::vec3(-20.0f, 0.0f, 20.0));
-    model = glm::scale(model, glm::vec3(0.25));
-    shader.setMat4("model", model);
-    renderCube();
 
     //erba
     if (ombra) {
@@ -459,93 +395,18 @@ void renderScene(Shader& shader, DrawableObjIstanced alberi, DrawableObj terreno
     erba.scale(glm::vec3(1.0f, 1.0f, 1.0f));
     erba.Draw();
 
-    ////albero
-    //albero.traslate(glm::vec3(0.0, -6.07, 0.0));
-    //albero.scale(glm::vec3(0.5f, 0.3f, 0.5f));
-    //albero.Draw();
-
     //Alberi
     if (ombra) {
-        alberi.getShader()->use();
-        alberi.getShader()->setFloat("soglia", 0.5);
+        alberi1.getShader()->use();
+        alberi1.getShader()->setFloat("soglia", 0.5);
     }
-    alberi.Draw();
-}
+    alberi1.Draw();
 
-
-// renderCube() renders a 1x1 3D cube in NDC.
-// -------------------------------------------------
-unsigned int cubeVAO = 0;
-unsigned int cubeVBO = 0;
-void renderCube()
-{
-    // initialize (if necessary)
-    if (cubeVAO == 0)
-    {
-        float vertices[] = {
-            // back face
-            -1.0f, -1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 0.0f, 0.0f, // bottom-left
-             1.0f,  1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 1.0f, 1.0f, // top-right
-             1.0f, -1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 1.0f, 0.0f, // bottom-right         
-             1.0f,  1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 1.0f, 1.0f, // top-right
-            -1.0f, -1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 0.0f, 0.0f, // bottom-left
-            -1.0f,  1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 0.0f, 1.0f, // top-left
-            // front face
-            -1.0f, -1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f, 0.0f, // bottom-left
-             1.0f, -1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f, 0.0f, // bottom-right
-             1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f, 1.0f, // top-right
-             1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f, 1.0f, // top-right
-            -1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f, 1.0f, // top-left
-            -1.0f, -1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f, 0.0f, // bottom-left
-            // left face
-            -1.0f,  1.0f,  1.0f, -1.0f,  0.0f,  0.0f, 1.0f, 0.0f, // top-right
-            -1.0f,  1.0f, -1.0f, -1.0f,  0.0f,  0.0f, 1.0f, 1.0f, // top-left
-            -1.0f, -1.0f, -1.0f, -1.0f,  0.0f,  0.0f, 0.0f, 1.0f, // bottom-left
-            -1.0f, -1.0f, -1.0f, -1.0f,  0.0f,  0.0f, 0.0f, 1.0f, // bottom-left
-            -1.0f, -1.0f,  1.0f, -1.0f,  0.0f,  0.0f, 0.0f, 0.0f, // bottom-right
-            -1.0f,  1.0f,  1.0f, -1.0f,  0.0f,  0.0f, 1.0f, 0.0f, // top-right
-            // right face
-             1.0f,  1.0f,  1.0f,  1.0f,  0.0f,  0.0f, 1.0f, 0.0f, // top-left
-             1.0f, -1.0f, -1.0f,  1.0f,  0.0f,  0.0f, 0.0f, 1.0f, // bottom-right
-             1.0f,  1.0f, -1.0f,  1.0f,  0.0f,  0.0f, 1.0f, 1.0f, // top-right         
-             1.0f, -1.0f, -1.0f,  1.0f,  0.0f,  0.0f, 0.0f, 1.0f, // bottom-right
-             1.0f,  1.0f,  1.0f,  1.0f,  0.0f,  0.0f, 1.0f, 0.0f, // top-left
-             1.0f, -1.0f,  1.0f,  1.0f,  0.0f,  0.0f, 0.0f, 0.0f, // bottom-left     
-            // bottom face
-            -1.0f, -1.0f, -1.0f,  0.0f, -1.0f,  0.0f, 0.0f, 1.0f, // top-right
-             1.0f, -1.0f, -1.0f,  0.0f, -1.0f,  0.0f, 1.0f, 1.0f, // top-left
-             1.0f, -1.0f,  1.0f,  0.0f, -1.0f,  0.0f, 1.0f, 0.0f, // bottom-left
-             1.0f, -1.0f,  1.0f,  0.0f, -1.0f,  0.0f, 1.0f, 0.0f, // bottom-left
-            -1.0f, -1.0f,  1.0f,  0.0f, -1.0f,  0.0f, 0.0f, 0.0f, // bottom-right
-            -1.0f, -1.0f, -1.0f,  0.0f, -1.0f,  0.0f, 0.0f, 1.0f, // top-right
-            // top face
-            -1.0f,  1.0f, -1.0f,  0.0f,  1.0f,  0.0f, 0.0f, 1.0f, // top-left
-             1.0f,  1.0f , 1.0f,  0.0f,  1.0f,  0.0f, 1.0f, 0.0f, // bottom-right
-             1.0f,  1.0f, -1.0f,  0.0f,  1.0f,  0.0f, 1.0f, 1.0f, // top-right     
-             1.0f,  1.0f,  1.0f,  0.0f,  1.0f,  0.0f, 1.0f, 0.0f, // bottom-right
-            -1.0f,  1.0f, -1.0f,  0.0f,  1.0f,  0.0f, 0.0f, 1.0f, // top-left
-            -1.0f,  1.0f,  1.0f,  0.0f,  1.0f,  0.0f, 0.0f, 0.0f  // bottom-left        
-        };
-        glGenVertexArrays(1, &cubeVAO);
-        glGenBuffers(1, &cubeVBO);
-        // fill buffer
-        glBindBuffer(GL_ARRAY_BUFFER, cubeVBO);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-        // link vertex attributes
-        glBindVertexArray(cubeVAO);
-        glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
-        glEnableVertexAttribArray(1);
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-        glEnableVertexAttribArray(2);
-        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        glBindVertexArray(0);
+    if (ombra) {
+        alberi2.getShader()->use();
+        alberi2.getShader()->setFloat("soglia", 0.5);
     }
-    // render Cube
-    glBindVertexArray(cubeVAO);
-    glDrawArrays(GL_TRIANGLES, 0, 36);
-    glBindVertexArray(0);
+    alberi2.Draw();
 }
 
 // renderQuad() renders a 1x1 XY quad in NDC

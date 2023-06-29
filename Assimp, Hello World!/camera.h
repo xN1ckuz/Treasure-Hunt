@@ -111,13 +111,16 @@ public:
     Yaw += xoffset;
     Pitch += yoffset;
 
+    //cout << "Yaw: " << Yaw << endl;
+    //cout << "Pitch: " << Pitch << endl;
+
     // make sure that when pitch is out of bounds, screen doesn't get flipped
     if (constrainPitch)
     {
       if (Pitch > 89.0f)
         Pitch = 89.0f;
-      if (Pitch < -89.0f)
-        Pitch = -89.0f;
+      if (Pitch < - 15.0f)
+        Pitch = - 15.0f;
     }
 
     // update Front, Right and Up Vectors using the updated Euler angles
@@ -132,6 +135,8 @@ public:
       Zoom = 1.0f;
     if (Zoom > 45.0f)
       Zoom = 45.0f;
+
+    cout << "Zoom: " << Zoom << endl;
   }
 
 private:
