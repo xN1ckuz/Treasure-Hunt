@@ -11,10 +11,10 @@
 
 using namespace std;
 
-class Albero: public DrawableObj {
+class DrawableObjIstanced: public DrawableObj {
 
 	public:
-		Albero(string dirFilePosizioni, string modelDirectory) : DrawableObj (modelDirectory){
+		DrawableObjIstanced(string dirFilePosizioni, string modelDirectory) : DrawableObj (modelDirectory){
 			setModel(modelDirectory);
 			caricaPosizioniEOrientamento(dirFilePosizioni);
 			creaBufferMatrix();
@@ -32,7 +32,6 @@ class Albero: public DrawableObj {
 				for (unsigned int j = 0; j < textures.size(); j++)
 				{
 					glActiveTexture(GL_TEXTURE0 + j); // active proper texture unit before binding
-					cout << "Texture active: " << GL_TEXTURE0 + j << endl;
 					// retrieve texture number (the N in diffuse_textureN)
 					string number;
 					string name = textures[j].type;
@@ -83,25 +82,25 @@ class Albero: public DrawableObj {
 				//fin.ignore(10, ' ');
 				float x = 0, y = 0, z = 0, alpha = 0, beta = 0, gamma = 0;
 				fin >> x;
-				cout << "x: " << x << endl;
+				//cout << "x: " << x << endl;
 				fin.ignore(2, ' ');
 				fin >> y;
-				cout << "y: " << y << endl;
+				//cout << "y: " << y << endl;
 				fin.ignore(2, ' ');
 				fin >> z;
-				cout << "z: " << z << endl;
+				//cout << "z: " << z << endl;
 				fin.ignore(2, '\n');
 				fin >> alpha;
-				cout << "alpha: " << alpha << endl;
+				//cout << "alpha: " << alpha << endl;
 				fin.ignore(3, ' ');
 				fin >> beta;
-				cout << "beta: " << beta << endl;
+				//cout << "beta: " << beta << endl;
 				fin.ignore(3, ' ');
 				fin >> gamma;
-				cout << "gamma: " << gamma << endl;
+				//cout << "gamma: " << gamma << endl;
 				fin.ignore(2, '\n');
 
-				posizioni.push_back(glm::vec3(x, z, y));
+				posizioni.push_back(glm::vec3(x, z, -y));
 				rotazioni.push_back(glm::vec3(alpha, beta, gamma));
 			}
 			fin.close();

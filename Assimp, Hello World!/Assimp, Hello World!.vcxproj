@@ -188,7 +188,7 @@
   <ItemGroup>
     <ClInclude Include="camera.h" />
     <ClInclude Include="DrawableObj.h" />
-    <ClInclude Include="Albero.h" />
+    <ClInclude Include="DrawableObjIstanced.h" />
     <ClInclude Include="kdtree.h" />
     <ClInclude Include="ShadowBox.h" />
     <ClInclude Include="Terrain.h" />

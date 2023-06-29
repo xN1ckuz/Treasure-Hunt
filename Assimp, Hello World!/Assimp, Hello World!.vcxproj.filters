@@ -107,7 +107,7 @@
     <ClInclude Include="ShadowBox.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Albero.h">
+    <ClInclude Include="DrawableObjIstanced.h">
       <Filter>Header Files\Mondo</Filter>
     </ClInclude>
   </ItemGroup>

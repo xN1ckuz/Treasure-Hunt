@@ -3,11 +3,12 @@
 in vec2 TexCoords;
 
 uniform sampler2D diffuseTexture;
+uniform float soglia;
 
 void main()
 {   
     float alpha = texture(diffuseTexture, TexCoords).a;
-    if (alpha == 0.0){
+    if (alpha < soglia){
         discard;
     }
     gl_FragDepth = gl_FragCoord.z;

@@ -16,7 +16,7 @@
 #include "DrawableObj.h"
 #include "Terrain.h"
 #include "ShadowBox.h"
-#include "Albero.h"
+#include "DrawableObjIstanced.h"
 
 #include <iostream>
 
@@ -25,7 +25,7 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void processInput(GLFWwindow* window);
 unsigned int loadTexture(const char* path);
-void renderScene(Shader& shader, Albero albero, DrawableObj terreno, DrawableObj erba);
+void renderScene(Shader& shader, DrawableObjIstanced albero, DrawableObj terreno, DrawableObj erba, bool ombra);
 void renderCube();
 void renderQuad();
 void calculateFPS();
@@ -79,8 +79,10 @@ float skyboxVertices[] = {
 // settings
 //const unsigned int SCR_WIDTH = 1920;
 //const unsigned int SCR_HEIGHT = 1080;
-const unsigned int SCR_WIDTH = 1366;
-const unsigned int SCR_HEIGHT = 768;
+//const unsigned int SCR_WIDTH = 1366;
+//const unsigned int SCR_HEIGHT = 768;
+const unsigned int SCR_WIDTH = 2560;
+const unsigned int SCR_HEIGHT = 1440;
 
 // camera
 Camera camera;
@@ -174,11 +176,11 @@ int main()
     DrawableObj erba = DrawableObj("resources/models/grass.obj");
     Terrain terreno = Terrain("resources/models/world.obj","resources/models/textures/terrain.jpg");
     //DrawableObj albero = DrawableObj("resources/models/redwood_01.obj");
-    Albero alberi = Albero("Posizioni.txt", "resources/models/redwood_01.obj");
+    DrawableObjIstanced alberi = DrawableObjIstanced("Posizioni.txt", "resources/models/redwood_01.obj");
 
     //Camera con walk
-    //camera = Camera(&terreno,terreno.updateCameraPositionOnMap(glm::vec3(0.0f, 0.0f, 0.0f),2,true));
-    camera = Camera(glm::vec3(0.0f, 0.0f, 3.0f));
+    camera = Camera(&terreno,terreno.updateCameraPositionOnMap(glm::vec3(0.0f, 0.0f, 0.0f),2,true));
+    //camera = Camera(glm::vec3(0.0f, 0.0f, 3.0f));
 
     // skybox VAO
     unsigned int skyboxVAO, skyboxVBO;
@@ -208,7 +210,8 @@ int main()
     // configure depth map FBO
     // -----------------------
     //const unsigned int SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
-    const unsigned int SHADOW_WIDTH = 8192, SHADOW_HEIGHT = 8192;
+    //const unsigned int SHADOW_WIDTH = 8192, SHADOW_HEIGHT = 8192;
+    const unsigned int SHADOW_WIDTH = 16384, SHADOW_HEIGHT = 16384;
     unsigned int depthMapFBO;
     glGenFramebuffers(1, &depthMapFBO);
     // create depth texture
@@ -294,7 +297,7 @@ int main()
         glActiveTexture(GL_TEXTURE3);
         glBindTexture(GL_TEXTURE_2D, woodTexture);
 
-        renderScene(simpleDepthShader, alberi, terreno, erba);
+        renderScene(simpleDepthShader, alberi, terreno, erba, true);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
         // reset viewport
@@ -360,7 +363,7 @@ int main()
         glBindTexture(GL_TEXTURE_2D, woodTexture);
         glActiveTexture(GL_TEXTURE4);
         glBindTexture(GL_TEXTURE_2D, depthMap);
-        renderScene(shader, alberi, terreno, erba);
+        renderScene(shader, alberi, terreno, erba, false);
 
         
         // render Depth map to quad for visual debugging
@@ -393,7 +396,7 @@ int main()
 
 // renders the 3D scene
 // --------------------
-void renderScene(Shader& shader, Albero alberi, DrawableObj terreno, DrawableObj erba)
+void renderScene(Shader& shader, DrawableObjIstanced alberi, DrawableObj terreno, DrawableObj erba, bool ombra)
 {   
 
     //floor
@@ -448,6 +451,10 @@ void renderScene(Shader& shader, Albero alberi, DrawableObj terreno, DrawableObj
     renderCube();
 
     //erba
+    if (ombra) {
+        erba.getShader()->use();
+        erba.getShader()->setFloat("soglia", 0.0001);
+    }
     erba.traslate(glm::vec3(0.0f, -0.2f, 0.0f));
     erba.scale(glm::vec3(1.0f, 1.0f, 1.0f));
     erba.Draw();
@@ -458,6 +465,10 @@ void renderScene(Shader& shader, Albero alberi, DrawableObj terreno, DrawableObj
     //albero.Draw();
 
     //Alberi
+    if (ombra) {
+        alberi.getShader()->use();
+        alberi.getShader()->setFloat("soglia", 0.5);
+    }
     alberi.Draw();
 }
 
