@@ -31,9 +31,6 @@
     <None Include="shadow_mapping.fs">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="shadow_mapping_depth_alpha.vs">
-      <Filter>Resource Files</Filter>
-    </None>
     <None Include="shadow_mapping_depth.fs">
       <Filter>Resource Files</Filter>
     </None>
@@ -60,6 +57,12 @@
     </None>
     <None Include="skybox.vs">
       <Filter>Header Files</Filter>
+    </None>
+    <None Include="model_loading_instanced.vs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="shadow_mapping_depth_instanced.vs">
+      <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -103,6 +106,9 @@
     </ClInclude>
     <ClInclude Include="ShadowBox.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Albero.h">
+      <Filter>Header Files\Mondo</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

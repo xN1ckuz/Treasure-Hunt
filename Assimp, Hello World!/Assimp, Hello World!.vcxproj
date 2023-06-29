@@ -169,12 +169,13 @@
     <None Include="model_loading.fs" />
     <None Include="model_loading.vs" />
     <None Include="model_loading_alpha.fs" />
+    <None Include="model_loading_instanced.vs" />
     <None Include="shadow_mapping.fs" />
     <None Include="shadow_mapping.vs" />
     <None Include="packages.config" />
     <None Include="shadow_mapping_depth.fs" />
     <None Include="shadow_mapping_depth.vs" />
-    <None Include="shadow_mapping_depth_alpha.vs" />
+    <None Include="shadow_mapping_depth_instanced.vs" />
     <None Include="skybox.fs" />
     <None Include="skybox.vs" />
     <None Include="text.fs" />
@@ -187,6 +188,7 @@
   <ItemGroup>
     <ClInclude Include="camera.h" />
     <ClInclude Include="DrawableObj.h" />
+    <ClInclude Include="Albero.h" />
     <ClInclude Include="kdtree.h" />
     <ClInclude Include="ShadowBox.h" />
     <ClInclude Include="Terrain.h" />
