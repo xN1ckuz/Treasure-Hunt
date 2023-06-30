@@ -84,7 +84,7 @@ class ShadowBox {
 		//calcola l'altezza del NEAR PLANE e del FAR PLANE del frustum camera
 		void calculateWidthsAndHeights(float* Hnear, float* Wnear, float* Hfar, float* Wfar) {
 			//float fov = glm::radians(camera->Zoom);
-			float fov = glm::radians(80.0f);
+			float fov = glm::radians(120.0f);
 			*Hnear = 2 * tan(fov / 2) * nearDist;
 			*Wnear = *Hnear * getAspectRatio();
 			*Hfar = 2 * tan(fov / 2) * farDist;

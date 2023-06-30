@@ -76,6 +76,7 @@ class DrawableObjIstanced: public DrawableObj {
 			while (true)
 			{
 				fin >> var;
+				//cout << var << endl;
 				if (var[0] == 'F') {
 					break;
 				}
@@ -101,6 +102,7 @@ class DrawableObjIstanced: public DrawableObj {
 				fin.ignore(2, '\n');
 
 				posizioni.push_back(glm::vec3(x, z, -y));
+				//posizioni.push_back(glm::vec3(x, z, y));
 				rotazioni.push_back(glm::vec3(alpha, beta, gamma));
 			}
 			fin.close();
@@ -115,10 +117,11 @@ class DrawableObjIstanced: public DrawableObj {
 			for (unsigned int i = 0; i < amount; i++) {
 				glm::mat4 model = glm::mat4(1.0f);
 				model = glm::translate(model, posizioni[i]);
-				/*model = glm::scale(model, glm::vec3(0.5f, 0.3f, 0.5f));*/
-				//model = glm::rotate(model, rotazioni[i].x, glm::vec3(0.0f, 1.0f, 0.0f));
-				//model = glm::rotate(model, rotazioni[i].y, glm::vec3(1.0f, 0.0f, 0.0f));
-				//model = glm::rotate(model, rotazioni[i].z, glm::vec3(0.0f, 0.0f, 1.0f));
+				model = glm::rotate(model, glm::radians(rotazioni[i].y), glm::vec3(0.0f, 0.0f, -1.0f));
+				model = glm::rotate(model, glm::radians(rotazioni[i].z), glm::vec3(0.0f, 1.0f, 0.0f));
+				model = glm::rotate(model, glm::radians(rotazioni[i].x), glm::vec3(1.0f, 0.0f, 0.0f));
+				model = glm::translate(model, glm::vec3(0, 0, 0));
+				model = glm::scale(model, glm::vec3(1.5, 1.5, 1.5));
 				modelMatrices[i] = model;
 			}
 
@@ -128,7 +131,6 @@ class DrawableObjIstanced: public DrawableObj {
 			glBindBuffer(GL_ARRAY_BUFFER, buffer);
 			glBufferData(GL_ARRAY_BUFFER, amount * sizeof(glm::mat4), &modelMatrices[0], GL_STATIC_DRAW);
 
-			cout << model->meshes.size() << endl;
 
 			for (unsigned int i = 0; i < model->meshes.size(); i++)
 			{

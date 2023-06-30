@@ -25,7 +25,7 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void processInput(GLFWwindow* window);
 unsigned int loadTexture(const char* path);
-void renderScene(DrawableObjIstanced alberi1, DrawableObjIstanced alberi2, DrawableObj terreno, DrawableObj erba, bool ombra);
+void renderScene(DrawableObjIstanced alberi1, DrawableObjIstanced alberi2, DrawableObj terreno, DrawableObj erba, DrawableObjIstanced cassa, bool ombra);
 void renderQuad();
 void calculateFPS();
 unsigned int loadCubemap(vector<std::string> faces);
@@ -166,16 +166,18 @@ int main()
     Shader shaderWithoutAlpha("model_loading.vs", "model_loading.fs");
     Shader shaderWithAlpha("model_loading.vs", "model_loading_alpha.fs");
     Shader shaderWithAlphaInstanced("model_loading_instanced.vs", "model_loading_alpha.fs");
+    Shader shaderWithoutAlphaInstanced("model_loading_instanced.vs", "model_loading.fs");
     Shader skyboxShader("skybox.vs", "skybox.fs");
 
 
     //load drowables
     //----------------
-    DrawableObj erba = DrawableObj("resources/models/grass.obj");
-    Terrain terreno = Terrain("resources/models/world.obj","resources/models/textures/terrain.jpg");
     //DrawableObj albero = DrawableObj("resources/models/redwood_01.obj");
     DrawableObjIstanced alberi1 = DrawableObjIstanced("redwood_01.txt", "resources/models/redwood_01.obj");
+    DrawableObjIstanced casse = DrawableObjIstanced("chests.txt","resources/models/chest.obj");
     DrawableObjIstanced alberi2 = DrawableObjIstanced("redwood_02.txt", "resources/models/redwood_02.obj");
+    DrawableObj erba = DrawableObj("resources/models/grass.obj");
+    Terrain terreno = Terrain("resources/models/world.obj", "resources/models/textures/terrain.jpg");
 
     //Camera con walk
     camera = Camera(&terreno,terreno.updateCameraPositionOnMap(glm::vec3(0.0f, 0.0f, 0.0f),2,true));
@@ -238,6 +240,9 @@ int main()
     shaderWithoutAlpha.use();
     shaderWithoutAlpha.setInt("shadowMap", 4);
 
+    shaderWithoutAlphaInstanced.use();
+    shaderWithoutAlphaInstanced.setInt("shadowMap", 4);
+
     shaderWithAlpha.use();
     shaderWithAlpha.setInt("shadowMap", 4);
 
@@ -283,12 +288,13 @@ int main()
         erba.setShaders(&simpleDepthShader);
         alberi1.setShaders(&simpleDepthShaderInstanced);
         alberi2.setShaders(&simpleDepthShaderInstanced);
+        casse.setShaders(&simpleDepthShaderInstanced);
 
         glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
         glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
         glClear(GL_DEPTH_BUFFER_BIT);
 
-        renderScene(alberi1,alberi2, terreno, erba, true);
+        renderScene(alberi1,alberi2, terreno, erba, casse, true);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
         // reset viewport
@@ -324,6 +330,13 @@ int main()
         shaderWithoutAlpha.setVec3("lightPos", lightPos);
         shaderWithoutAlpha.setMat4("lightSpaceMatrix", lightSpaceMatrix);
 
+        shaderWithoutAlphaInstanced.use();
+        shaderWithoutAlphaInstanced.setMat4("view", view);
+        shaderWithoutAlphaInstanced.setMat4("projection", projection);
+        shaderWithoutAlphaInstanced.setVec3("viewPos", camera.Position);
+        shaderWithoutAlphaInstanced.setVec3("lightPos", lightPos);
+        shaderWithoutAlphaInstanced.setMat4("lightSpaceMatrix", lightSpaceMatrix);
+
         shaderWithAlpha.use();
         shaderWithAlpha.setMat4("view", view);
         shaderWithAlpha.setMat4("projection", projection);
@@ -342,10 +355,11 @@ int main()
         erba.setShaders(&shaderWithAlpha);
         alberi1.setShaders(&shaderWithAlphaInstanced);
         alberi2.setShaders(&shaderWithAlphaInstanced);
+        casse.setShaders(&shaderWithoutAlphaInstanced);
 
         glActiveTexture(GL_TEXTURE4);
         glBindTexture(GL_TEXTURE_2D, depthMap);
-        renderScene(alberi1, alberi2, terreno, erba, true);
+        renderScene(alberi1, alberi2, terreno, erba, casse, true);
 
         
         // render Depth map to quad for visual debugging
@@ -378,13 +392,16 @@ int main()
 
 // renders the 3D scene
 // --------------------
-void renderScene(DrawableObjIstanced alberi1, DrawableObjIstanced alberi2, DrawableObj terreno, DrawableObj erba, bool ombra)
+void renderScene(DrawableObjIstanced alberi1, DrawableObjIstanced alberi2, DrawableObj terreno, DrawableObj erba, DrawableObjIstanced casse, bool ombra)
 {   
 
     //floor
     terreno.traslate(glm::vec3(0.0f, -0.2f, 0.0f));
     terreno.scale(glm::vec3(1.0f, 1.0f, 1.0f));
     terreno.Draw();
+
+    //Casse
+    casse.Draw();
 
     //erba
     if (ombra) {
@@ -394,6 +411,7 @@ void renderScene(DrawableObjIstanced alberi1, DrawableObjIstanced alberi2, Drawa
     erba.traslate(glm::vec3(0.0f, -0.2f, 0.0f));
     erba.scale(glm::vec3(1.0f, 1.0f, 1.0f));
     erba.Draw();
+
 
     //Alberi
     if (ombra) {
@@ -407,6 +425,13 @@ void renderScene(DrawableObjIstanced alberi1, DrawableObjIstanced alberi2, Drawa
         alberi2.getShader()->setFloat("soglia", 0.5);
     }
     alberi2.Draw();
+
+    if (ombra) {
+        casse.getShader()->use();
+        casse.getShader()->setFloat("soglia", 0.5);
+    }
+    
+    
 }
 
 // renderQuad() renders a 1x1 XY quad in NDC
