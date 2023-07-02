@@ -183,7 +183,7 @@ int main()
     smokeGen.generaParticle(glfwGetTime() + 1, glm::vec3(3.98174f, -2.47112f, 24.7642f), glm::vec3(3.98174f, 0.47112f, 24.7642f), 0.5, 10);
 
     //Camera con walk
-    camera = Camera(terreno.updateCameraPositionOnMap(glm::vec3(0.0f, 0.0f, 0.0f), 2, true));
+    camera = Camera(terreno.updateCameraPositionOnMap(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), 2, true));
     glm::vec3 posVecchia = camera.Position;
     //camera = Camera(glm::vec3(0.0f, 0.0f, 3.0f));
 
@@ -273,7 +273,7 @@ int main()
         // -----
         posVecchia = camera.Position;
         processInput(window);
-        camera.Position = terreno.updateCameraPositionOnMap(camera.Position, 2, false);
+        camera.Position = terreno.updateCameraPositionOnMap(camera.Position, posVecchia, 2, false);
         casse.aggiornaPosPerCollisione(&camera.Position, posVecchia, 3.0);
         alberi1.aggiornaPosPerCollisione(&camera.Position, posVecchia, 3.0);
         alberi2.aggiornaPosPerCollisione(&camera.Position, posVecchia, 2.5);

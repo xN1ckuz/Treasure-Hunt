@@ -41,21 +41,12 @@ class Terrain: public DrawableObj {
 			return listaTrangoloPt;
 		}
 
-		glm::vec3 updateCameraPositionOnMap(glm::vec3 posCamera, float offset, bool tutti) {
-			if (posCamera.x < minMaxValues.minX) {
-				posCamera.x = minMaxValues.minX + 0.3;
-			}
-			if (posCamera.x > minMaxValues.maxX) {
-				posCamera.x = minMaxValues.maxX - 0.3;
-			}
-			if (posCamera.z < minMaxValues.minZ) {
-				posCamera.z = minMaxValues.minZ + 0.3;
-			}
-			if (posCamera.z > minMaxValues.maxZ) {
-				posCamera.z = minMaxValues.maxZ - 0.3; 
+		glm::vec3 updateCameraPositionOnMap(glm::vec3 posCamera,glm::vec3 posVecchia, float offset, bool tutti) {
+			if (posCamera.x < minMaxValues.minX || posCamera.x > minMaxValues.maxX || posCamera.z < minMaxValues.minZ || posCamera.z > minMaxValues.maxZ) {
+				return posVecchia;
 			}
 
-			TriangoloPt puntoCamera(glm::vec3 (posCamera.x, posCamera.y - offset, posCamera.z));
+			TriangoloPt puntoCamera(glm::vec3(posCamera.x, posCamera.y - offset, posCamera.z));
 
 			vector<TriangoloPt> vicino;
 			if (tutti == true) {
