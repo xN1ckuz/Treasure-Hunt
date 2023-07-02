@@ -4,12 +4,15 @@
 #include<fstream>
 #include<vector>
 #include "DrawableObj.h"
+#include "kdtree.h"
+#include "Punto3D.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
 using namespace std;
+using namespace kd;
 
 class DrawableObjIstanced: public DrawableObj {
 
@@ -61,9 +64,19 @@ class DrawableObjIstanced: public DrawableObj {
 			
 		}
 
-	private:
+		void aggiornaPosPerCollisione(glm::vec3* pos, glm::vec3 posVecchia, float raggio) {
+			glm::vec3 puntoVicino(0.0);
+			for (int i = 0; i < posizioni.size(); i++) {
+				puntoVicino = posizioni[i];
+				float distanza = sqrt(pow(pos->x - puntoVicino.x, 2) + pow(pos->y - puntoVicino.y, 2) + pow(pos->z - puntoVicino.z, 2));
+				if (distanza <= raggio) {
+					*pos = posVecchia;
+					return;
+				}
+			}
+		}
 
-		unsigned int instanceVBO;
+	protected:
 		vector<glm::vec3> posizioni;
 		vector<glm::vec3> rotazioni;
 
@@ -71,7 +84,7 @@ class DrawableObjIstanced: public DrawableObj {
 
 			//Apro il flusso da file
 			ifstream fin(dirFilePosizioni);
-			
+
 			string var;
 			while (true)
 			{
@@ -106,8 +119,6 @@ class DrawableObjIstanced: public DrawableObj {
 				rotazioni.push_back(glm::vec3(alpha, beta, gamma));
 			}
 			fin.close();
-
-
 		}
 
 		void creaBufferMatrix() {
@@ -154,4 +165,10 @@ class DrawableObjIstanced: public DrawableObj {
 				glBindVertexArray(0);
 			}
 		}
+
+	private:
+
+		unsigned int instanceVBO;
+			
+		
 };

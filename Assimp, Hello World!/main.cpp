@@ -17,6 +17,7 @@
 #include "Terrain.h"
 #include "ShadowBox.h"
 #include "DrawableObjIstanced.h"
+#include "effects.h"
 
 #include <iostream>
 
@@ -25,7 +26,7 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void processInput(GLFWwindow* window);
 unsigned int loadTexture(const char* path);
-void renderScene(DrawableObjIstanced alberi1, DrawableObjIstanced alberi2, DrawableObj terreno, DrawableObj erba, DrawableObjIstanced cassa, bool ombra);
+void renderScene(DrawableObjIstanced alberi1, DrawableObjIstanced alberi2, DrawableObj terreno, DrawableObj erba, DrawableObjIstanced casse, SmokeGenerator smokeGen, float currentFrame, bool ombra);
 void renderQuad();
 void calculateFPS();
 unsigned int loadCubemap(vector<std::string> faces);
@@ -103,7 +104,7 @@ unsigned int fps = 0;
 
 // lighting info
 // -------------
-glm::vec3 lightPos(-4.0f, 150.0f, 70.0f);
+glm::vec3 lightPos(-10.0f, 80.0f, -30.0f);
 
 // Shadow
 // -------------
@@ -155,20 +156,19 @@ int main()
     // -----------------------------
     glEnable(GL_MULTISAMPLE);
     glEnable(GL_DEPTH_TEST);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     // build and compile shaders
     // -------------------------
     Shader simpleDepthShader("shadow_mapping_depth.vs", "shadow_mapping_depth.fs");
     Shader simpleDepthShaderInstanced("shadow_mapping_depth_instanced.vs", "shadow_mapping_depth.fs");
+    Shader simpleDepthShaderSmoke("shadow_mapping_depth.vs", "shadow_mapping_depth_smoke.fs");
     Shader debugDepthQuad("debug_quad.vs", "debug_quad_depth.fs");
     Shader shaderWithoutAlpha("model_loading.vs", "model_loading.fs");
     Shader shaderWithAlpha("model_loading.vs", "model_loading_alpha.fs");
     Shader shaderWithAlphaInstanced("model_loading_instanced.vs", "model_loading_alpha.fs");
     Shader shaderWithoutAlphaInstanced("model_loading_instanced.vs", "model_loading.fs");
     Shader skyboxShader("skybox.vs", "skybox.fs");
-
+    Shader smokeShader("smokeShader.vs", "smokeShader.fs");
 
     //load drowables
     //----------------
@@ -178,9 +178,13 @@ int main()
     DrawableObjIstanced alberi2 = DrawableObjIstanced("redwood_02.txt", "resources/models/redwood_02.obj");
     DrawableObj erba = DrawableObj("resources/models/grass.obj");
     Terrain terreno = Terrain("resources/models/world.obj", "resources/models/textures/terrain.jpg");
+    SmokeGenerator smokeGen = SmokeGenerator("resources/cloud/cloud.obj", 50);
+    //smokeGen.generaParticle(glfwGetTime() + 1, glm::vec3(0.0f, -6.0f, -2.0f), glm::vec3(0.0f, 0.0f, -2.0f), 0.5, 5);
+    smokeGen.generaParticle(glfwGetTime() + 1, glm::vec3(3.98174f, -2.47112f, 24.7642f), glm::vec3(3.98174f, 0.47112f, 24.7642f), 0.5, 10);
 
     //Camera con walk
-    camera = Camera(&terreno,terreno.updateCameraPositionOnMap(glm::vec3(0.0f, 0.0f, 0.0f),2,true));
+    camera = Camera(terreno.updateCameraPositionOnMap(glm::vec3(0.0f, 0.0f, 0.0f), 2, true));
+    glm::vec3 posVecchia = camera.Position;
     //camera = Camera(glm::vec3(0.0f, 0.0f, 3.0f));
 
     // skybox VAO
@@ -249,6 +253,9 @@ int main()
     shaderWithAlphaInstanced.use();
     shaderWithAlphaInstanced.setInt("shadowMap", 4);
 
+    smokeShader.use();
+    smokeShader.setInt("shadowMap", 4);
+
     debugDepthQuad.use();
     debugDepthQuad.setInt("depthMap", 4);
 
@@ -264,8 +271,12 @@ int main()
 
         // input
         // -----
+        posVecchia = camera.Position;
         processInput(window);
-
+        camera.Position = terreno.updateCameraPositionOnMap(camera.Position, 2, false);
+        casse.aggiornaPosPerCollisione(&camera.Position, posVecchia, 3.0);
+        alberi1.aggiornaPosPerCollisione(&camera.Position, posVecchia, 3.0);
+        alberi2.aggiornaPosPerCollisione(&camera.Position, posVecchia, 2.5);
         //cout << "Camera: "<< "Pos x: " << camera.Position.x << "Pos y: " << camera.Position.y << "Pos z: " << camera.Position.z << endl;
         //cout << "Luce: "<< "Pos x: " << lightPos.x << "Pos y: " << lightPos.y << "Pos z: " << lightPos.z << endl;
 
@@ -284,17 +295,21 @@ int main()
         simpleDepthShaderInstanced.use();
         simpleDepthShaderInstanced.setMat4("lightSpaceMatrix", lightSpaceMatrix);
 
+        simpleDepthShaderSmoke.use();
+        simpleDepthShaderSmoke.setMat4("lightSpaceMatrix", lightSpaceMatrix);
+
         terreno.setShaders(&simpleDepthShader);
         erba.setShaders(&simpleDepthShader);
         alberi1.setShaders(&simpleDepthShaderInstanced);
         alberi2.setShaders(&simpleDepthShaderInstanced);
         casse.setShaders(&simpleDepthShaderInstanced);
+        smokeGen.setShaders(&simpleDepthShaderSmoke);
 
         glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
         glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
         glClear(GL_DEPTH_BUFFER_BIT);
 
-        renderScene(alberi1,alberi2, terreno, erba, casse, true);
+        renderScene(alberi1,alberi2, terreno, erba, casse, smokeGen, currentFrame, true);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
         // reset viewport
@@ -306,7 +321,7 @@ int main()
         skyboxShader.use();
         glm::mat4 view = glm::mat4(glm::mat3(camera.GetViewMatrix())); // remove translation from the view matrix
         //glm::mat4 view = glm::mat4(camera.GetViewMatrix()); // remove translation from the view matrix
-        glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+        glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 10.0f);
         skyboxShader.setMat4("view", view);
         skyboxShader.setMat4("projection", projection);
         // skybox cube
@@ -351,16 +366,24 @@ int main()
         shaderWithAlphaInstanced.setVec3("lightPos", lightPos);
         shaderWithAlphaInstanced.setMat4("lightSpaceMatrix", lightSpaceMatrix);
 
+        smokeShader.use();
+        smokeShader.setMat4("view", view);
+        smokeShader.setMat4("projection", projection);
+        smokeShader.setVec3("viewPos", camera.Position);
+        smokeShader.setVec3("lightPos", lightPos);
+        smokeShader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
+        smokeShader.setInt("texture_diffuse1", 0);
+
         terreno.setShaders(&shaderWithoutAlpha);
         erba.setShaders(&shaderWithAlpha);
         alberi1.setShaders(&shaderWithAlphaInstanced);
         alberi2.setShaders(&shaderWithAlphaInstanced);
         casse.setShaders(&shaderWithoutAlphaInstanced);
+        smokeGen.setShaders(&smokeShader);
 
         glActiveTexture(GL_TEXTURE4);
         glBindTexture(GL_TEXTURE_2D, depthMap);
-        renderScene(alberi1, alberi2, terreno, erba, casse, true);
-
+        renderScene(alberi1, alberi2, terreno, erba, casse, smokeGen, currentFrame, true);
         
         // render Depth map to quad for visual debugging
         // ---------------------------------------------
@@ -392,26 +415,23 @@ int main()
 
 // renders the 3D scene
 // --------------------
-void renderScene(DrawableObjIstanced alberi1, DrawableObjIstanced alberi2, DrawableObj terreno, DrawableObj erba, DrawableObjIstanced casse, bool ombra)
+void renderScene(DrawableObjIstanced alberi1, DrawableObjIstanced alberi2, DrawableObj terreno, DrawableObj erba, DrawableObjIstanced casse, SmokeGenerator smokeGen, float currentFrame, bool ombra)
 {   
-
     //floor
     terreno.traslate(glm::vec3(0.0f, -0.2f, 0.0f));
     terreno.scale(glm::vec3(1.0f, 1.0f, 1.0f));
     terreno.Draw();
 
     //Casse
+    if (ombra) {
+        casse.getShader()->use();
+        casse.getShader()->setFloat("soglia", 0.5);
+    }
     casse.Draw();
 
-    //erba
-    if (ombra) {
-        erba.getShader()->use();
-        erba.getShader()->setFloat("soglia", 0.0001);
-    }
-    erba.traslate(glm::vec3(0.0f, -0.2f, 0.0f));
-    erba.scale(glm::vec3(1.0f, 1.0f, 1.0f));
-    erba.Draw();
-
+    //Per gli oggetti trasparenti
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     //Alberi
     if (ombra) {
@@ -426,12 +446,23 @@ void renderScene(DrawableObjIstanced alberi1, DrawableObjIstanced alberi2, Drawa
     }
     alberi2.Draw();
 
+    //erba
     if (ombra) {
-        casse.getShader()->use();
-        casse.getShader()->setFloat("soglia", 0.5);
+        erba.getShader()->use();
+        erba.getShader()->setFloat("soglia", 0.0001);
     }
-    
-    
+    erba.traslate(glm::vec3(0.0f, -0.2f, 0.0f));
+    erba.scale(glm::vec3(1.0f, 1.0f, 1.0f));
+    erba.Draw();
+
+    //fumo
+    if (ombra) {
+        smokeGen.getShader()->use();
+        smokeGen.getShader()->setFloat("soglia", 0.1);
+    }
+    smokeGen.Draw(currentFrame);
+
+    glDisable(GL_BLEND);
 }
 
 // renderQuad() renders a 1x1 XY quad in NDC

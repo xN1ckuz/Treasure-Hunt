@@ -22,7 +22,7 @@ const float YAW = -90.0f;
 const float PITCH = 0.0f;
 const float SPEED = 10.5f;
 const float SENSITIVITY = 0.1f;
-const float ZOOM = 75.0f;
+const float ZOOM = 60.0f;
 
 
 // An abstract camera class that processes input and calculates the corresponding Euler Angles, Vectors and Matrices for use in OpenGL
@@ -42,7 +42,6 @@ public:
   float MovementSpeed;
   float MouseSensitivity;
   float Zoom;
-  Terrain* terrain;
 
   // constructor with vectors
   Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), float yaw = YAW, float pitch = PITCH) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVITY), Zoom(ZOOM)
@@ -52,7 +51,6 @@ public:
     Yaw = yaw;
     Pitch = pitch;
     updateCameraVectors();
-    terrain = nullptr;
   }
   // constructor with scalar values
   Camera(float posX, float posY, float posZ, float upX, float upY, float upZ, float yaw, float pitch) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVITY), Zoom(ZOOM)
@@ -62,17 +60,6 @@ public:
     Yaw = yaw;
     Pitch = pitch;
     updateCameraVectors();
-    terrain = nullptr;
-  }
-  //constructor with terrain
-  Camera(Terrain* terrainObj, glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), float yaw = YAW, float pitch = PITCH) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVITY), Zoom(ZOOM)
-  {
-      terrain = terrainObj;
-      Position = position;
-      WorldUp = up;
-      Yaw = yaw;
-      Pitch = pitch;
-      updateCameraVectors();
   }
 
   // returns the view matrix calculated using Euler Angles and the LookAt Matrix
@@ -96,9 +83,6 @@ public:
     }
     if (direction == RIGHT) {
         Position += Right * velocity;
-    }
-    if (terrain != nullptr) {
-        Position = terrain->updateCameraPositionOnMap(Position, 2,false);
     }
   }
 
@@ -133,10 +117,8 @@ public:
     Zoom -= (float)yoffset;
     if (Zoom < 1.0f)
       Zoom = 1.0f;
-    if (Zoom > 45.0f)
-      Zoom = 45.0f;
-
-    cout << "Zoom: " << Zoom << endl;
+    if (Zoom > 60.0f)
+      Zoom = 60.0f;
   }
 
 private:

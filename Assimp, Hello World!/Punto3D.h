@@ -5,17 +5,11 @@ public:
     float x, y, z;
 
     static constexpr int DIM = 3;
-    
-    Punto3D() {
-        x = 0.0;
-        y = 0.0;
-        z = 0.0;
-    }
 
-    Punto3D (glm::vec3 v){
-        x = v.x;
-        y = v.y;
-        z = v.z;
+    Punto3D(glm::vec3 pos) {
+        x = pos.x;
+        y = pos.y;
+        z = pos.z;
     }
 
     float& operator[](int index) {
@@ -44,7 +38,7 @@ public:
         }
     }
 
-    bool operator==(const Punto3D& p) const {
+    bool operator==(const TriangoloPt& p) const {
         return x == p.x && y == p.y && z == p.z;
     }
 

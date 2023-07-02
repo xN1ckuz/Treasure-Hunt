@@ -1,7 +1,5 @@
 #pragma once
 
-using namespace std;
-
 class TriangoloPt {
 public:
     vector<glm::vec3> listaVertici;
