@@ -18,15 +18,17 @@
 #include "ShadowBox.h"
 #include "DrawableObjIstanced.h"
 #include "effects.h"
+#include "Coperchi.h"
 
 #include <iostream>
+
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
-void processInput(GLFWwindow* window);
+void processInput(GLFWwindow* window, Coperchi* coperchiCasse, SmokeHendler* smokeHendler, float currentFrame);
 unsigned int loadTexture(const char* path);
-void renderScene(DrawableObjIstanced alberi1, DrawableObjIstanced alberi2, DrawableObj terreno, DrawableObj erba, DrawableObjIstanced casse, SmokeGenerator smokeGen, float currentFrame, bool ombra);
+void renderScene(DrawableObjIstanced alberi1, DrawableObjIstanced alberi2, DrawableObj terreno, DrawableObj erba, DrawableObjIstanced basiCasse, Coperchi coperchiCasse, DrawableObj cubo, SmokeHendler* smokeHendler, float currentFrame, bool ombra);
 void renderQuad();
 void calculateFPS();
 unsigned int loadCubemap(vector<std::string> faces);
@@ -172,20 +174,19 @@ int main()
 
     //load drowables
     //----------------
-    //DrawableObj albero = DrawableObj("resources/models/redwood_01.obj");
+    Coperchi coperchiCasse = Coperchi("chests.txt", "resources/models/chest1.obj");
+    DrawableObjIstanced basiCasse = DrawableObjIstanced("chests.txt", "resources/models/chest2.obj");
     DrawableObjIstanced alberi1 = DrawableObjIstanced("redwood_01.txt", "resources/models/redwood_01.obj");
-    DrawableObjIstanced casse = DrawableObjIstanced("chests.txt","resources/models/chest.obj");
     DrawableObjIstanced alberi2 = DrawableObjIstanced("redwood_02.txt", "resources/models/redwood_02.obj");
     DrawableObj erba = DrawableObj("resources/models/grass.obj");
     Terrain terreno = Terrain("resources/models/world.obj", "resources/models/textures/terrain.jpg");
-    SmokeGenerator smokeGen = SmokeGenerator("resources/cloud/cloud.obj", 50);
-    //smokeGen.generaParticle(glfwGetTime() + 1, glm::vec3(0.0f, -6.0f, -2.0f), glm::vec3(0.0f, 0.0f, -2.0f), 0.5, 5);
-    smokeGen.generaParticle(glfwGetTime() + 1, glm::vec3(3.98174f, -2.47112f, 24.7642f), glm::vec3(3.98174f, 0.47112f, 24.7642f), 0.5, 10);
+    SmokeHendler smokeHendler = SmokeHendler("resources/cloud/cloud.obj", 150, 0.5, 10);
+
+    DrawableObj cubo = DrawableObj("resources/cubo/cubo.obj");
 
     //Camera con walk
     camera = Camera(terreno.updateCameraPositionOnMap(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), 2, true));
     glm::vec3 posVecchia = camera.Position;
-    //camera = Camera(glm::vec3(0.0f, 0.0f, 3.0f));
 
     // skybox VAO
     unsigned int skyboxVAO, skyboxVBO;
@@ -272,9 +273,9 @@ int main()
         // input
         // -----
         posVecchia = camera.Position;
-        processInput(window);
+        processInput(window, &coperchiCasse, &smokeHendler, currentFrame);
         camera.Position = terreno.updateCameraPositionOnMap(camera.Position, posVecchia, 2, false);
-        casse.aggiornaPosPerCollisione(&camera.Position, posVecchia, 3.0);
+        //basiCasse.aggiornaPosPerCollisione(&camera.Position, posVecchia, 3.0);
         alberi1.aggiornaPosPerCollisione(&camera.Position, posVecchia, 3.0);
         alberi2.aggiornaPosPerCollisione(&camera.Position, posVecchia, 2.5);
         //cout << "Camera: "<< "Pos x: " << camera.Position.x << "Pos y: " << camera.Position.y << "Pos z: " << camera.Position.z << endl;
@@ -302,14 +303,17 @@ int main()
         erba.setShaders(&simpleDepthShader);
         alberi1.setShaders(&simpleDepthShaderInstanced);
         alberi2.setShaders(&simpleDepthShaderInstanced);
-        casse.setShaders(&simpleDepthShaderInstanced);
-        smokeGen.setShaders(&simpleDepthShaderSmoke);
+        basiCasse.setShaders(&simpleDepthShaderInstanced);
+        coperchiCasse.setShaders(&simpleDepthShaderInstanced);
+        smokeHendler.setShaders(&simpleDepthShaderSmoke);
+
+        cubo.setShaders(&simpleDepthShader);
 
         glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
         glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
         glClear(GL_DEPTH_BUFFER_BIT);
 
-        renderScene(alberi1,alberi2, terreno, erba, casse, smokeGen, currentFrame, true);
+        renderScene(alberi1,alberi2, terreno, erba, basiCasse, coperchiCasse, cubo, &smokeHendler, currentFrame, true);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
         // reset viewport
@@ -320,8 +324,7 @@ int main()
         // --------------------------------------------------------------
         skyboxShader.use();
         glm::mat4 view = glm::mat4(glm::mat3(camera.GetViewMatrix())); // remove translation from the view matrix
-        //glm::mat4 view = glm::mat4(camera.GetViewMatrix()); // remove translation from the view matrix
-        glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 10.0f);
+        glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 15.0f);
         skyboxShader.setMat4("view", view);
         skyboxShader.setMat4("projection", projection);
         // skybox cube
@@ -378,12 +381,15 @@ int main()
         erba.setShaders(&shaderWithAlpha);
         alberi1.setShaders(&shaderWithAlphaInstanced);
         alberi2.setShaders(&shaderWithAlphaInstanced);
-        casse.setShaders(&shaderWithoutAlphaInstanced);
-        smokeGen.setShaders(&smokeShader);
+        basiCasse.setShaders(&shaderWithoutAlphaInstanced);
+        coperchiCasse.setShaders(&shaderWithoutAlphaInstanced);
+        smokeHendler.setShaders(&smokeShader);
+        
+        cubo.setShaders(&shaderWithoutAlpha);
 
         glActiveTexture(GL_TEXTURE4);
         glBindTexture(GL_TEXTURE_2D, depthMap);
-        renderScene(alberi1, alberi2, terreno, erba, casse, smokeGen, currentFrame, true);
+        renderScene(alberi1, alberi2, terreno, erba, basiCasse, coperchiCasse, cubo, &smokeHendler, currentFrame, true);
         
         // render Depth map to quad for visual debugging
         // ---------------------------------------------
@@ -415,7 +421,7 @@ int main()
 
 // renders the 3D scene
 // --------------------
-void renderScene(DrawableObjIstanced alberi1, DrawableObjIstanced alberi2, DrawableObj terreno, DrawableObj erba, DrawableObjIstanced casse, SmokeGenerator smokeGen, float currentFrame, bool ombra)
+void renderScene(DrawableObjIstanced alberi1, DrawableObjIstanced alberi2, DrawableObj terreno, DrawableObj erba, DrawableObjIstanced basiCasse, Coperchi coperchiCasse, DrawableObj cubo, SmokeHendler* smokeHendler, float currentFrame, bool ombra)
 {   
     //floor
     terreno.traslate(glm::vec3(0.0f, -0.2f, 0.0f));
@@ -424,10 +430,16 @@ void renderScene(DrawableObjIstanced alberi1, DrawableObjIstanced alberi2, Drawa
 
     //Casse
     if (ombra) {
-        casse.getShader()->use();
-        casse.getShader()->setFloat("soglia", 0.5);
+        basiCasse.getShader()->use();
+        basiCasse.getShader()->setFloat("soglia", 0.5);
     }
-    casse.Draw();
+    basiCasse.Draw();
+
+    if (ombra) {
+        coperchiCasse.getShader()->use();
+        coperchiCasse.getShader()->setFloat("soglia", 0.5);
+    }
+    coperchiCasse.Draw();
 
     //Per gli oggetti trasparenti
     glEnable(GL_BLEND);
@@ -457,11 +469,10 @@ void renderScene(DrawableObjIstanced alberi1, DrawableObjIstanced alberi2, Drawa
 
     //fumo
     if (ombra) {
-        smokeGen.getShader()->use();
-        smokeGen.getShader()->setFloat("soglia", 0.1);
+        smokeHendler->getShader()->use();
+        smokeHendler->getShader()->setFloat("soglia", 0.1);
     }
-    smokeGen.Draw(currentFrame);
-
+    smokeHendler->Draw(currentFrame);
     glDisable(GL_BLEND);
 }
 
@@ -498,11 +509,10 @@ void renderQuad()
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
 // ---------------------------------------------------------------------------------------------------------
-void processInput(GLFWwindow* window)
+void processInput(GLFWwindow* window, Coperchi* coperchiCasse, SmokeHendler* smokeHendler, float currentFrame)
 {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
-
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
         camera.ProcessKeyboard(FORWARD, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
@@ -511,6 +521,11 @@ void processInput(GLFWwindow* window)
         camera.ProcessKeyboard(LEFT, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         camera.ProcessKeyboard(RIGHT, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
+        int cassaDaAprire = coperchiCasse->getCoperchioToOpen(camera.Position, 4);
+        coperchiCasse->apriCassa(cassaDaAprire, 45, smokeHendler, currentFrame);
+    }
+       
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes

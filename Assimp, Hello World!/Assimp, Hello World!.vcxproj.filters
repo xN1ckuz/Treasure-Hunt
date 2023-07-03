@@ -116,5 +116,8 @@
     <ClInclude Include="effects.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Coperchi.h">
+      <Filter>Header Files\Mondo</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

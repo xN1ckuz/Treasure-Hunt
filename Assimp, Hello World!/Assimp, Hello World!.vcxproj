@@ -187,6 +187,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h" />
+    <ClInclude Include="Coperchi.h" />
     <ClInclude Include="DrawableObj.h" />
     <ClInclude Include="DrawableObjIstanced.h" />
     <ClInclude Include="effects.h" />

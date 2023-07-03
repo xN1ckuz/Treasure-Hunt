@@ -144,7 +144,7 @@ class DrawableObjIstanced: public DrawableObj {
 
 
 			for (unsigned int i = 0; i < model->meshes.size(); i++)
-			{
+			{	
 				unsigned int VAO = model->meshes[i].VAO;
 				glBindVertexArray(VAO);
 				// set attribute pointers for matrix (4 times vec4)
