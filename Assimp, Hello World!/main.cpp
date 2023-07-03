@@ -151,6 +151,8 @@ int main()
     // Sound Settings
     sf::Music backgroundAudio;
 
+    backgroundAudio.openFromFile("resources/audio/background.wav");
+
     //Background Audio Settings
     sf::Listener::setPosition(0.0f, 0.0f, 0.0f);
     backgroundAudio.setPosition(0.0f, 0.0f, 0.0f);

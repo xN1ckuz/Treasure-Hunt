@@ -24,16 +24,16 @@ D:\Projects\Treasure Hunt\Assimp, Hello World!\Coperchi.h(81,110): warning C4267
 D:\Projects\Treasure Hunt\Assimp, Hello World!\Coperchi.h(81,72): warning C4267: 'argomento': conversione da 'size_t' a 'GLsizei'. Possibile perdita di dati.
 D:\Projects\Treasure Hunt\Assimp, Hello World!\Coperchi.h(134,18): warning C4267: 'inizializzazione': conversione da 'size_t' a 'int'. Possibile perdita di dati.
 D:\Projects\Treasure Hunt\Assimp, Hello World!\main.cpp(96,18): warning C4305: 'inizializzazione': troncamento da 'double' a 'float'
-D:\Projects\Treasure Hunt\Assimp, Hello World!\main.cpp(286,28): warning C4244: 'inizializzazione': conversione da 'double' a 'float'. Possibile perdita di dati.
-D:\Projects\Treasure Hunt\Assimp, Hello World!\main.cpp(485,46): warning C4305: 'argomento': troncamento da 'double' a 'float'
-D:\Projects\Treasure Hunt\Assimp, Hello World!\main.cpp(494,55): warning C4305: 'argomento': troncamento da 'double' a 'float'
+D:\Projects\Treasure Hunt\Assimp, Hello World!\main.cpp(285,28): warning C4244: 'inizializzazione': conversione da 'double' a 'float'. Possibile perdita di dati.
+D:\Projects\Treasure Hunt\Assimp, Hello World!\main.cpp(484,46): warning C4305: 'argomento': troncamento da 'double' a 'float'
+D:\Projects\Treasure Hunt\Assimp, Hello World!\main.cpp(493,55): warning C4305: 'argomento': troncamento da 'double' a 'float'
+D:\Projects\Treasure Hunt\Assimp, Hello World!\main.cpp(566,17): warning C4244: '=': conversione da 'double' a 'float'. Possibile perdita di dati.
 D:\Projects\Treasure Hunt\Assimp, Hello World!\main.cpp(567,17): warning C4244: '=': conversione da 'double' a 'float'. Possibile perdita di dati.
-D:\Projects\Treasure Hunt\Assimp, Hello World!\main.cpp(568,17): warning C4244: '=': conversione da 'double' a 'float'. Possibile perdita di dati.
+D:\Projects\Treasure Hunt\Assimp, Hello World!\main.cpp(571,19): warning C4244: 'inizializzazione': conversione da 'double' a 'float'. Possibile perdita di dati.
 D:\Projects\Treasure Hunt\Assimp, Hello World!\main.cpp(572,19): warning C4244: 'inizializzazione': conversione da 'double' a 'float'. Possibile perdita di dati.
-D:\Projects\Treasure Hunt\Assimp, Hello World!\main.cpp(573,19): warning C4244: 'inizializzazione': conversione da 'double' a 'float'. Possibile perdita di dati.
+D:\Projects\Treasure Hunt\Assimp, Hello World!\main.cpp(574,13): warning C4244: '=': conversione da 'double' a 'float'. Possibile perdita di dati.
 D:\Projects\Treasure Hunt\Assimp, Hello World!\main.cpp(575,13): warning C4244: '=': conversione da 'double' a 'float'. Possibile perdita di dati.
-D:\Projects\Treasure Hunt\Assimp, Hello World!\main.cpp(576,13): warning C4244: '=': conversione da 'double' a 'float'. Possibile perdita di dati.
-D:\Projects\Treasure Hunt\Assimp, Hello World!\main.cpp(585,31): warning C4244: 'argomento': conversione da 'double' a 'float'. Possibile perdita di dati.
+D:\Projects\Treasure Hunt\Assimp, Hello World!\main.cpp(584,31): warning C4244: 'argomento': conversione da 'double' a 'float'. Possibile perdita di dati.
 D:\Projects\Treasure Hunt\Assimp, Hello World!\kdtree.h(224,33): warning C4267: 'argomento': conversione da 'size_t' a 'int'. Possibile perdita di dati.
 D:\Projects\Treasure Hunt\Assimp, Hello World!\kdtree.h(220,23): message : durante la compilazione della funzione membro 'double kd::AlberoKD<TriangoloPt>::calcolaDistanza(const PuntoT &,const PuntoT &)' di modello classe
           with
@@ -50,9 +50,9 @@ D:\Projects\Treasure Hunt\Assimp, Hello World!\kdtree.h(224,49): warning C4267: 
 D:\Projects\Treasure Hunt\Assimp, Hello World!\kdtree.h(224,56): warning C4267: 'argomento': conversione da 'size_t' a 'int'. Possibile perdita di dati.
 LINK : warning LNK4098: la libreria predefinita 'LIBCMT' è in conflitto con l'utilizzo di altre librerie; usare /NODEFAULTLIB:libreria
   Generazione codice in corso...
-  Previous IPDB and IOBJ mismatch, fall back to full compilation.
-D:\Projects\Treasure Hunt\Assimp, Hello World!\renderText.h(130): warning C4715: 'initRenderText': non tutti i percorsi di controllo restituiscono un valore
-  All 1634 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  1 of 1634 functions (<0.1%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    8 functions had inline decision re-evaluated but remain unchanged
   Generazione codice terminata
 freetype.lib(ftbase.obj) : warning LNK4099: impossibile trovare il PDB '' con 'freetype.lib(ftbase.obj)' o in ''; oggetto collegato senza informazioni di debug
 freetype.lib(ftinit.obj) : warning LNK4099: impossibile trovare il PDB '' con 'freetype.lib(ftinit.obj)' o in ''; oggetto collegato senza informazioni di debug
