@@ -120,7 +120,16 @@ class Coperchi: public DrawableObjIstanced {
 			smokeHendler->addSmokeGenerator(currentFrame, getPosizioneIndice(cassaDaAprire));
 		}
 
-		
+		int contaCasse() {
+			int counter = 0;
+			for (int i = 0; i < coperchiAperti.size(); i++) {
+				if (coperchiAperti[i]) {
+					counter++;
+				}
+			}
+			return 5 - counter;
+		}
+
 		void creaBufferMatrix() {
 		    int amount = posizioni.size();
 			for (int i = 0; i < amount; i++) {

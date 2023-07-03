@@ -16,6 +16,9 @@
     <Filter Include="Header Files\Mondo">
       <UniqueIdentifier>{ecdc559a-8f34-46e5-82d0-242e3fafba9f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Execution Libraries">
+      <UniqueIdentifier>{3a086247-9d85-4d8a-8c32-d374c76031b3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -46,12 +49,6 @@
     <None Include="shadow_mapping_depth.vs">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="skybox.fs">
-      <Filter>Header Files</Filter>
-    </None>
-    <None Include="skybox.vs">
-      <Filter>Header Files</Filter>
-    </None>
     <None Include="model_loading_instanced.vs">
       <Filter>Resource Files</Filter>
     </None>
@@ -62,6 +59,12 @@
       <Filter>Resource Files</Filter>
     </None>
     <None Include="shadow_mapping_depth_smoke.fs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="skybox.fs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="skybox.vs">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
@@ -87,9 +90,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="stb_image.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="render_text.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Terrain.h">
@@ -119,5 +119,22 @@
     <ClInclude Include="Coperchi.h">
       <Filter>Header Files\Mondo</Filter>
     </ClInclude>
+    <ClInclude Include="renderText.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="lib\x64\release\assimp-vc142-mt.dll">
+      <Filter>Execution Libraries</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="lib\x64\release\openal32.dll">
+      <Filter>Execution Libraries</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="lib\x64\release\sfml-audio-2.dll">
+      <Filter>Execution Libraries</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="lib\x64\release\sfml-system-2.dll">
+      <Filter>Execution Libraries</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
 </Project>

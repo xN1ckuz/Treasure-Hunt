@@ -150,6 +150,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir)\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -157,7 +158,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>.\lib\x64\release\</AdditionalLibraryDirectories>
-      <AdditionalDependencies>freetype.lib;assimp-vc142-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>freetype.lib;assimp-vc142-mt.lib;sfml-audio.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>copy /Y "$(ProjectDir)lib\x64\release\assimp-vc142-mt.dll" "$(TargetDir)"</Command>
@@ -166,6 +167,18 @@
   <ItemGroup>
     <None Include="debug_quad_depth.fs" />
     <None Include="debug_quad.vs" />
+    <CopyFileToFolders Include="lib\x64\release\assimp-vc142-mt.dll">
+      <FileType>Document</FileType>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="lib\x64\release\openal32.dll">
+      <FileType>Document</FileType>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="lib\x64\release\sfml-audio-2.dll">
+      <FileType>Document</FileType>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="lib\x64\release\sfml-system-2.dll">
+      <FileType>Document</FileType>
+    </CopyFileToFolders>
     <None Include="model_loading.fs" />
     <None Include="model_loading.vs" />
     <None Include="model_loading_alpha.fs" />
@@ -193,11 +206,11 @@
     <ClInclude Include="effects.h" />
     <ClInclude Include="kdtree.h" />
     <ClInclude Include="Punto3D.h" />
+    <ClInclude Include="renderText.h" />
     <ClInclude Include="ShadowBox.h" />
     <ClInclude Include="Terrain.h" />
     <ClInclude Include="mesh.h" />
     <ClInclude Include="model.h" />
-    <ClInclude Include="render_text.h" />
     <ClInclude Include="shader_m.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="TriangoloPt.h" />

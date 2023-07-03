@@ -19,6 +19,8 @@
 #include "DrawableObjIstanced.h"
 #include "effects.h"
 #include "Coperchi.h"
+#include "renderText.h"
+#include "SFML/Audio.hpp"
 
 #include <iostream>
 
@@ -131,7 +133,7 @@ int main()
     // glfw window creation
     // --------------------
     string TITOLO_APP = "Treasure-Hunt";
-    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, TITOLO_APP.data(), NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, TITOLO_APP.data(), glfwGetPrimaryMonitor(), NULL);
     if (window == NULL)
     {
         std::cout << "Failed to create GLFW window" << std::endl;
@@ -145,6 +147,18 @@ int main()
 
     // tell GLFW to capture our mouse
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+    // Sound Settings
+    sf::Music backgroundAudio;
+
+    //Background Audio Settings
+    sf::Listener::setPosition(0.0f, 0.0f, 0.0f);
+    backgroundAudio.setPosition(0.0f, 0.0f, 0.0f);
+    backgroundAudio.setPitch(1.0f);
+    backgroundAudio.setVolume(4.0f);
+    backgroundAudio.setMinDistance(5.0);
+    backgroundAudio.setLoop(true);
+    backgroundAudio.play();
 
     // glad: load all OpenGL function pointers
     // ---------------------------------------
@@ -180,9 +194,11 @@ int main()
     DrawableObjIstanced alberi2 = DrawableObjIstanced("redwood_02.txt", "resources/models/redwood_02.obj");
     DrawableObj erba = DrawableObj("resources/models/grass.obj");
     Terrain terreno = Terrain("resources/models/world.obj", "resources/models/textures/terrain.jpg");
-    SmokeHendler smokeHendler = SmokeHendler("resources/cloud/cloud.obj", 150, 0.5, 10);
+    SmokeHendler smokeHendler = SmokeHendler("resources/cloud/cloud.obj", 100, 0.5, 10);
 
     DrawableObj cubo = DrawableObj("resources/cubo/cubo.obj");
+
+    initRenderText(SCR_WIDTH, SCR_HEIGHT);
 
     //Camera con walk
     camera = Camera(terreno.updateCameraPositionOnMap(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), 2, true));
@@ -390,7 +406,11 @@ int main()
         glActiveTexture(GL_TEXTURE4);
         glBindTexture(GL_TEXTURE_2D, depthMap);
         renderScene(alberi1, alberi2, terreno, erba, basiCasse, coperchiCasse, cubo, &smokeHendler, currentFrame, true);
-        
+
+        RenderText(("FPS: " + std::to_string(fps)).c_str(), 10, SCR_HEIGHT - 20, 0.3f, glm::vec3(1.0f, 1.0f, 1.0f));
+        RenderText(("Tempo: " + std::to_string('110')).c_str(), SCR_WIDTH - 250, 10, 0.6f, glm::vec3(1.0f, 1.0f, 1.0f));
+        RenderText(("Casse Rimanenti: " + std::to_string(coperchiCasse.contaCasse())).c_str(), 10, 10, 0.6f, glm::vec3(1.0f, 1.0f, 1.0f));
+
         // render Depth map to quad for visual debugging
         // ---------------------------------------------
         //debugDepthQuad.use();
@@ -523,7 +543,7 @@ void processInput(GLFWwindow* window, Coperchi* coperchiCasse, SmokeHendler* smo
         camera.ProcessKeyboard(RIGHT, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
         int cassaDaAprire = coperchiCasse->getCoperchioToOpen(camera.Position, 4);
-        coperchiCasse->apriCassa(cassaDaAprire, 45, smokeHendler, currentFrame);
+        coperchiCasse->apriCassa(cassaDaAprire, 70, smokeHendler, currentFrame);
     }
        
 }
