@@ -67,7 +67,8 @@ int initRenderText(const unsigned int SCR_WIDTH, const unsigned int SCR_HEIGHT)
     }
     else {
         // set size to load glyphs as
-        FT_Set_Pixel_Sizes(face, 0, 48);
+        float sizeInPixel = (48 * SCR_WIDTH) / 1366;
+        FT_Set_Pixel_Sizes(face, 0, sizeInPixel);
 
         // disable byte-alignment restriction
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -182,4 +183,23 @@ void RenderText(std::string text, float x, float y, float scale, glm::vec3 color
     glDisable(GL_CULL_FACE);
     glDisable(GL_BLEND);
 
+}
+
+float getWidthOfString(string message) {
+    float text_width = 0;
+    for (int i = 0; i < message.size(); i++) {
+        text_width +=  Characters[message[i]].Size.y;
+    }
+    return text_width;
+}
+
+float getHeightOfString(string message) {
+    float max_text_heigt = 0;
+    for (int i = 0; i < message.size(); i++) {
+        float height = Characters[message[i]].Size.x;
+        if (max_text_heigt < height) {
+            max_text_heigt = height;
+        }
+    }
+    return max_text_heigt;
 }

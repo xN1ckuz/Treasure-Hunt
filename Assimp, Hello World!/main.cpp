@@ -116,6 +116,10 @@ float nearDist = 0.001f;
 float farDist = 80.0f;
 ShadowBox shadowBox = ShadowBox(nearDist, farDist, SCR_WIDTH, SCR_HEIGHT, &camera, lightPos);
 
+// Tempo di gioco
+// -------------
+float tempoMassimo = 5 * (60);
+
 int main()
 {   
     // glfw: initialize and configure
@@ -280,6 +284,7 @@ int main()
 
     // render loop
     // -----------
+    float tempoInizioGioco = glfwGetTime();
     while (!glfwWindowShouldClose(window))
     {
         // per-frame time logic
@@ -293,9 +298,10 @@ int main()
         posVecchia = camera.Position;
         processInput(window, &coperchiCasse, &smokeHendler, currentFrame);
         camera.Position = terreno.updateCameraPositionOnMap(camera.Position, posVecchia, 2, false);
-        //basiCasse.aggiornaPosPerCollisione(&camera.Position, posVecchia, 3.0);
+        basiCasse.aggiornaPosPerCollisione(&camera.Position, posVecchia, 3.0);
         alberi1.aggiornaPosPerCollisione(&camera.Position, posVecchia, 3.0);
         alberi2.aggiornaPosPerCollisione(&camera.Position, posVecchia, 2.5);
+        int cassaNear = coperchiCasse.getCoperchioToOpen(camera.Position, 5);
         //cout << "Camera: "<< "Pos x: " << camera.Position.x << "Pos y: " << camera.Position.y << "Pos z: " << camera.Position.z << endl;
         //cout << "Luce: "<< "Pos x: " << lightPos.x << "Pos y: " << lightPos.y << "Pos z: " << lightPos.z << endl;
 
@@ -408,10 +414,19 @@ int main()
         glActiveTexture(GL_TEXTURE4);
         glBindTexture(GL_TEXTURE_2D, depthMap);
         renderScene(alberi1, alberi2, terreno, erba, basiCasse, coperchiCasse, cubo, &smokeHendler, currentFrame, true);
-
         RenderText(("FPS: " + std::to_string(fps)).c_str(), 10, SCR_HEIGHT - 20, 0.3f, glm::vec3(1.0f, 1.0f, 1.0f));
-        RenderText(("Tempo: " + std::to_string('110')).c_str(), SCR_WIDTH - 250, 10, 0.6f, glm::vec3(1.0f, 1.0f, 1.0f));
+        float tempoRimasto = tempoMassimo - (currentFrame - tempoInizioGioco);
+        string tempo;
+        if (int(tempoRimasto) % 60 < 10) {
+            tempo = "Tempo: " + std::to_string(int(tempoRimasto) / 60) + "min e " + "0" + std::to_string(int(tempoRimasto) % 60) + "sec";
+        }else{
+            tempo = "Tempo: " + std::to_string(int(tempoRimasto) / 60) + "min e " + std::to_string(int(tempoRimasto) % 60) + "sec";
+        }
+        RenderText((tempo).c_str(), (SCR_WIDTH - getWidthOfString(tempo)) / 2, SCR_HEIGHT - getHeightOfString(tempo), 0.6f, glm::vec3(1.0f, 0.0f, 0.0f));
         RenderText(("Casse Rimanenti: " + std::to_string(coperchiCasse.contaCasse())).c_str(), 10, 10, 0.6f, glm::vec3(1.0f, 1.0f, 1.0f));
+        if (cassaNear != -1) {
+            RenderText("SPACE per aprire", (SCR_WIDTH - getWidthOfString("SPACE per aprire")) / 2, (SCR_HEIGHT - getHeightOfString("SPACE per aprire")) / 2, 0.6f, glm::vec3(1.0f, 1.0f, 1.0f));
+        }
 
         // render Depth map to quad for visual debugging
         // ---------------------------------------------
@@ -544,7 +559,7 @@ void processInput(GLFWwindow* window, Coperchi* coperchiCasse, SmokeHendler* smo
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         camera.ProcessKeyboard(RIGHT, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
-        int cassaDaAprire = coperchiCasse->getCoperchioToOpen(camera.Position, 4);
+        int cassaDaAprire = coperchiCasse->getCoperchioToOpen(camera.Position, 5);
         coperchiCasse->apriCassa(cassaDaAprire, 70, smokeHendler, currentFrame);
     }
        
