@@ -17,6 +17,10 @@ class DrawableObj {
 			setModel(modelDirectory);
 		}
 
+		DrawableObj() {
+
+		}
+
 		void setShaders(Shader *shaderS) {
 			shader = shaderS;
 		}

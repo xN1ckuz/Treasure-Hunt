@@ -131,6 +131,10 @@ class SmokeHendler {
 			this->vita = vita;
 		}
 
+		SmokeHendler() {
+
+		}
+
 		void addSmokeGenerator(float tempoInit, glm::vec3 posCassa) {
 			SmokeGenerator* smokeGen = new SmokeGenerator(modelDir,nParticle);
 			smokeGen->generaParticle(tempoInit, posCassa, glm::vec3(posCassa.x, posCassa.y + 10, posCassa.z), raggio, vita);

@@ -23,6 +23,10 @@ class DrawableObjIstanced: public DrawableObj {
 			creaBufferMatrix();
 		}
 
+		DrawableObjIstanced() {
+
+		}
+
 		void Draw() {
 			shader->use();
 			for (int i = 0; i < model->meshes.size(); i++) {

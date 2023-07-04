@@ -159,6 +159,12 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>.\lib\x64\release\</AdditionalLibraryDirectories>
       <AdditionalDependencies>freetype.lib;assimp-vc142-mt.lib;sfml-audio.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <HeapReserveSize>
+      </HeapReserveSize>
+      <StackReserveSize>
+      </StackReserveSize>
+      <HeapCommitSize>2000000</HeapCommitSize>
+      <StackCommitSize>2000000</StackCommitSize>
     </Link>
     <PostBuildEvent>
       <Command>copy /Y "$(ProjectDir)lib\x64\release\assimp-vc142-mt.dll" "$(TargetDir)"</Command>

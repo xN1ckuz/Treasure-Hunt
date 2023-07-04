@@ -20,6 +20,10 @@ class Terrain: public DrawableObj {
 			minMaxValues = getMinMaxXZFromMap();
 		}
 
+		Terrain() : DrawableObj() {
+
+		}
+
 		void Draw() {
 			shader->use();
 			shader->setMat4("model", trasfMatrix);

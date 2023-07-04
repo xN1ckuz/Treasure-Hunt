@@ -13,6 +13,10 @@ class Coperchi: public DrawableObjIstanced {
 			creaBufferMatrix();
 		}
 
+		Coperchi() : DrawableObjIstanced() {
+
+		}
+
 		glm::vec3 getPosizioneIndice(int i) {
 			return posizioni[i];
 		}
