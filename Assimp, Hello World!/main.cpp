@@ -32,10 +32,11 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void processInput(GLFWwindow* window, Coperchi* coperchiCasse, SmokeHendler* smokeHendler, float currentFrame);
 unsigned int loadTexture(const char* path);
 void renderScene(DrawableObjIstanced alberi1, DrawableObjIstanced alberi2, DrawableObj terreno, DrawableObj erba, DrawableObjIstanced basiCasse, Coperchi coperchiCasse, DrawableObj cubo, SmokeHendler* smokeHendler, float currentFrame, bool ombra);
+void renderLoading(Shader* shader, DrawableObj cubo, Camera cam, GLFWwindow* window, unsigned int* texture);
 void renderQuad();
+void renderRect(unsigned int SCR_WIDTH, unsigned int SCR_HEIGHT);
 void calculateFPS();
 unsigned int loadCubemap(vector<std::string> faces);
-void renderLoading(Shader* shader, DrawableObj cubo, Camera cam, GLFWwindow* window);
 
 float skyboxVertices[] = {
     // positions          
@@ -85,10 +86,10 @@ float skyboxVertices[] = {
 // settings
 //const unsigned int SCR_WIDTH = 1366;
 //const unsigned int SCR_HEIGHT = 768;
-const unsigned int SCR_WIDTH = 640;
-const unsigned int SCR_HEIGHT = 360;
-//const unsigned int SCR_WIDTH = 2560;
-//const unsigned int SCR_HEIGHT = 1440;
+//const unsigned int SCR_WIDTH = 640;
+//const unsigned int SCR_HEIGHT = 360;
+const unsigned int SCR_WIDTH = 2560;
+const unsigned int SCR_HEIGHT = 1440;
 
 // camera
 Camera camera;
@@ -142,7 +143,7 @@ int main()
     //GLFWmonitor *monitor = glfwGetPrimaryMonitor();
     //const GLFWvidmode* mode = glfwGetVideoMode(monitor);
 
-    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, TITOLO_APP.data(), NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, TITOLO_APP.data(), glfwGetPrimaryMonitor(), NULL);
     if (window == NULL)
     {
         std::cout << "Failed to create GLFW window" << std::endl;
@@ -186,7 +187,7 @@ int main()
 
     // build and compile shaders
     // -------------------------
-    Shader loadingScreen("loading_screen.vs", "loading_screen.fs");
+    Shader shaderloadingScreen("loading_screen.vs", "loading_screen.fs");
     Shader simpleDepthShader("shadow_mapping_depth.vs", "shadow_mapping_depth.fs");
     Shader simpleDepthShaderInstanced("shadow_mapping_depth_instanced.vs", "shadow_mapping_depth.fs");
     Shader simpleDepthShaderSmoke("shadow_mapping_depth.vs", "shadow_mapping_depth_smoke.fs");
@@ -234,6 +235,8 @@ int main()
         "resources/skybox/back.jpg"
     };
     unsigned int cubemapTexture = loadCubemap(faces);
+
+    unsigned int loadingTexture = loadTexture("resources/loading/loading_screen.jpg");
 
     // configure depth map FBO
     // -----------------------
@@ -283,7 +286,7 @@ int main()
 
     debugDepthQuad.use();
     debugDepthQuad.setInt("depthMap", 4);
-
+    
     // render loop
     // -----------
     int frame = 0;
@@ -291,7 +294,7 @@ int main()
     while (!glfwWindowShouldClose(window))
     {
         if (frame == 0) {
-            renderLoading(&loadingScreen, cubo, camera, window);     
+            renderLoading(&shaderloadingScreen, cubo, camera, window, &loadingTexture);
         } else {
             if (!areModelsLoaded) {
                 terreno = new Terrain("resources/models/world.obj", "resources/models/textures/terrain.jpg");
@@ -626,7 +629,9 @@ unsigned int loadTexture(char const* path)
     glGenTextures(1, &textureID);
 
     int width, height, nrComponents;
+    stbi_set_flip_vertically_on_load(true);
     unsigned char* data = stbi_load(path, &width, &height, &nrComponents, 0);
+    stbi_set_flip_vertically_on_load(false);
     if (data)
     {
         GLenum format;
@@ -708,18 +713,31 @@ unsigned int loadCubemap(vector<std::string> faces)
     return textureID;
 }
 
-void renderLoading(Shader* shader, DrawableObj cubo, Camera cam, GLFWwindow* window) {
+void renderLoading(Shader* shader, DrawableObj cubo, Camera cam, GLFWwindow* window, unsigned int* texture) 
+{
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // also clear the depth buffer now!
 
-    glm::mat4 view = glm::mat4(glm::mat3(camera.GetViewMatrix())); // remove translation from the view matrix
-    glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 15.0f);
-    shader->use();
-    shader->setMat4("view", view);
-    shader->setMat4("projection", projection);
+    //glm::mat4 view = glm::mat4(glm::mat3(camera.GetViewMatrix())); // remove translation from the view matrix
+    //glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 15.0f);
 
-    cubo.setShaders(shader);
-    cubo.Draw();
+    //shader->use();
+    //shader->setMat4("view", view);
+    //shader->setMat4("projection", projection);
+    //shader->setMat4("model", glm::mat4(1.0));
+   
+    //shader->setInt("loadingTex", 0);
+    //glActiveTexture(GL_TEXTURE0);
+    //glBindTexture(GL_TEXTURE_2D, *texture);
+    //renderQuad();
+
+    shader->use();
+    shader->setFloat("near_plane", NEAR_PLANE);
+    shader->setFloat("far_plane", FAR_PLANE);
+    shader->setInt("loadingTex", 4);
+    glActiveTexture(GL_TEXTURE4);
+    glBindTexture(GL_TEXTURE_2D, *texture);
+    renderQuad();
 
     glfwSwapBuffers(window);
     glfwPollEvents();

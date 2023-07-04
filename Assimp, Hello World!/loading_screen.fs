@@ -3,11 +3,15 @@ out vec4 FragColor;
 
 in vec2 TexCoords;
 
-uniform sampler2D texture_diffuse1;
+uniform sampler2D loadingTex;
+uniform float near_plane;
+uniform float far_plane;
 
 void main()
 {    
-    FragColor = texture(texture_diffuse1, TexCoords);
+    vec3 color = texture(loadingTex, TexCoords).rgb;
+    // FragColor = vec4(vec3(LinearizeDepth(depthValue) / far_plane), 1.0); // perspective
+    FragColor = vec4(color, 1.0); // orthographic
 }
 
 

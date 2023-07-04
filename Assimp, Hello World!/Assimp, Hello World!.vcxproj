@@ -185,6 +185,8 @@
     <CopyFileToFolders Include="lib\x64\release\sfml-system-2.dll">
       <FileType>Document</FileType>
     </CopyFileToFolders>
+    <None Include="loading_screen.fs" />
+    <None Include="loading_screen.vs" />
     <None Include="model_loading.fs" />
     <None Include="model_loading.vs" />
     <None Include="model_loading_alpha.fs" />
