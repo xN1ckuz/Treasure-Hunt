@@ -27,9 +27,11 @@ class Audio {
 				case 0:
 					backgroundAudio.openFromFile(path);
 					setBackGroundAudio();
+					break;
 				case 1:
 					bufferOpenChest.loadFromFile(path);
 					setOpenChestSound();
+					break;
 			}
 		}
 	
