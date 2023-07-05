@@ -1,0 +1,155 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="glad.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="audio.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="camera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Coperchi.h">
+      <Filter>Header Files\World</Filter>
+    </ClInclude>
+    <ClInclude Include="DrawableObj.h">
+      <Filter>Header Files\World</Filter>
+    </ClInclude>
+    <ClInclude Include="DrawableObjIstanced.h">
+      <Filter>Header Files\World</Filter>
+    </ClInclude>
+    <ClInclude Include="effects.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="kdtree.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="model.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="mesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Punto3D.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="renderText.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="shader_m.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ShadowBox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="stb_image.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Terrain.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TriangoloPt.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="lib\x64\release\assimp-vc142-mt.dll">
+      <Filter>Execution Libraries</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="lib\x64\release\sfml-audio-2.dll">
+      <Filter>Execution Libraries</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="lib\x64\release\sfml-system-2.dll">
+      <Filter>Execution Libraries</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="lib\x64\release\openal32.dll">
+      <Filter>Execution Libraries</Filter>
+    </CopyFileToFolders>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+    <None Include="debug_quad.vs">
+      <Filter>Resources Files\Shaders</Filter>
+    </None>
+    <None Include="debug_quad_depth.fs">
+      <Filter>Resources Files\Shaders</Filter>
+    </None>
+    <None Include="loading_screen.fs">
+      <Filter>Resources Files\Shaders</Filter>
+    </None>
+    <None Include="loading_screen.vs">
+      <Filter>Resources Files\Shaders</Filter>
+    </None>
+    <None Include="model_loading.fs">
+      <Filter>Resources Files\Shaders</Filter>
+    </None>
+    <None Include="model_loading.vs">
+      <Filter>Resources Files\Shaders</Filter>
+    </None>
+    <None Include="model_loading_alpha.fs">
+      <Filter>Resources Files\Shaders</Filter>
+    </None>
+    <None Include="model_loading_instanced.vs">
+      <Filter>Resources Files\Shaders</Filter>
+    </None>
+    <None Include="model_loading_trasp.fs">
+      <Filter>Resources Files\Shaders</Filter>
+    </None>
+    <None Include="model_loading_trasp.vs">
+      <Filter>Resources Files\Shaders</Filter>
+    </None>
+    <None Include="shadow_mapping_depth.fs">
+      <Filter>Resources Files\Shaders</Filter>
+    </None>
+    <None Include="shadow_mapping_depth.vs">
+      <Filter>Resources Files\Shaders</Filter>
+    </None>
+    <None Include="shadow_mapping_depth_instanced.vs">
+      <Filter>Resources Files\Shaders</Filter>
+    </None>
+    <None Include="shadow_mapping_depth_smoke.fs">
+      <Filter>Resources Files\Shaders</Filter>
+    </None>
+    <None Include="skybox.fs">
+      <Filter>Resources Files\Shaders</Filter>
+    </None>
+    <None Include="skybox.vs">
+      <Filter>Resources Files\Shaders</Filter>
+    </None>
+    <None Include="smokeShader.fs">
+      <Filter>Resources Files\Shaders</Filter>
+    </None>
+    <None Include="text.fs">
+      <Filter>Resources Files\Shaders</Filter>
+    </None>
+    <None Include="text.vs">
+      <Filter>Resources Files\Shaders</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Execution Libraries">
+      <UniqueIdentifier>{442c12fd-7bf8-475d-8676-b47fa5f5965e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{6c6692c8-f847-430a-9011-5bb5e1acd49a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\World">
+      <UniqueIdentifier>{020f86e2-c148-4fe6-9919-b692b5cde7e3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{7452429b-2f1f-44e3-a0ed-d5b7d8cd9ff1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources Files">
+      <UniqueIdentifier>{a8584af1-0c27-4024-8913-801b6c83dc7d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources Files\Shaders">
+      <UniqueIdentifier>{747f1aec-6383-44dc-a83e-b449189c0ffd}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

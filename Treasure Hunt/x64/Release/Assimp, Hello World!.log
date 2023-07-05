@@ -1,4 +1,7 @@
-﻿  cl : warning della riga di comando D9025 : override di '/sdl' con '/GS-'
+﻿C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(531,5): warning MSB8028: la directory intermedia (x64\Release\) contiene file condivisi da un altro progetto (Improved Shadow Mapping.vcxproj). Tale condizione può comportare un comportamento di pulizia e ricompilazione non corretto.
+  cl : warning della riga di comando D9025 : override di '/sdl' con '/GS-'
+  glad.c
+  cl : warning della riga di comando D9025 : override di '/sdl' con '/GS-'
   main.cpp
 D:\Projects\Treasure Hunt\Assimp, Hello World!\shader_m.h(60,36): warning C4101: 'e': variabile locale senza riferimenti
 D:\Projects\Treasure Hunt\Assimp, Hello World!\mesh.h(84,46): warning C4267: 'argomento': conversione da 'size_t' a 'GLsizei'. Possibile perdita di dati.
@@ -58,9 +61,9 @@ D:\Projects\Treasure Hunt\Assimp, Hello World!\kdtree.h(224,49): warning C4267: 
 D:\Projects\Treasure Hunt\Assimp, Hello World!\kdtree.h(224,56): warning C4267: 'argomento': conversione da 'size_t' a 'int'. Possibile perdita di dati.
 LINK : warning LNK4098: la libreria predefinita 'LIBCMT' è in conflitto con l'utilizzo di altre librerie; usare /NODEFAULTLIB:libreria
   Generazione codice in corso...
-  3 of 1653 functions ( 0.2%) were compiled, the rest were copied from previous compilation.
-    1 functions were new in current compilation
-    16 functions had inline decision re-evaluated but remain unchanged
+  Previous IPDB not found, fall back to full compilation.
+D:\Projects\Treasure Hunt\Assimp, Hello World!\renderText.h(131): warning C4715: 'initRenderText': non tutti i percorsi di controllo restituiscono un valore
+  All 1653 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
   Generazione codice terminata
 freetype.lib(ftbase.obj) : warning LNK4099: impossibile trovare il PDB '' con 'freetype.lib(ftbase.obj)' o in ''; oggetto collegato senza informazioni di debug
 freetype.lib(ftinit.obj) : warning LNK4099: impossibile trovare il PDB '' con 'freetype.lib(ftinit.obj)' o in ''; oggetto collegato senza informazioni di debug
@@ -85,5 +88,5 @@ freetype.lib(ftgzip.obj) : warning LNK4099: impossibile trovare il PDB '' con 'f
 freetype.lib(ftlzw.obj) : warning LNK4099: impossibile trovare il PDB '' con 'freetype.lib(ftlzw.obj)' o in ''; oggetto collegato senza informazioni di debug
 freetype.lib(ftbitmap.obj) : warning LNK4099: impossibile trovare il PDB '' con 'freetype.lib(ftbitmap.obj)' o in ''; oggetto collegato senza informazioni di debug
 freetype.lib(ftdebug.obj) : warning LNK4099: impossibile trovare il PDB '' con 'freetype.lib(ftdebug.obj)' o in ''; oggetto collegato senza informazioni di debug
-  Assimp, Hello World!.vcxproj -> D:\Projects\Treasure Hunt\x64\Release\Improved Shadow Mapping.exe
+  Assimp, Hello World!.vcxproj -> D:\Projects\Treasure Hunt\x64\Release\Treasure Hunt.exe
           1 file copiati.

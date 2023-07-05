@@ -22,9 +22,9 @@
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{0ab26ef0-59ef-4ba2-abf5-1d80c7fcc6a1}</ProjectGuid>
-    <RootNamespace>AssimpHelloWorld</RootNamespace>
+    <RootNamespace>Treasure Hunt</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>Improved Shadow Mapping</ProjectName>
+    <ProjectName>Treasure Hunt</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
