@@ -134,6 +134,9 @@
     <ClInclude Include="renderText.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="audio.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="lib\x64\release\assimp-vc142-mt.dll">

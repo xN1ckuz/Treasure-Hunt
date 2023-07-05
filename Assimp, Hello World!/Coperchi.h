@@ -1,6 +1,6 @@
 #pragma once
-
-#include"DrawableObjIstanced.h"
+#include "DrawableObjIstanced.h"
+#include "audio.h"
 
 using namespace std;
 
@@ -91,7 +91,7 @@ class Coperchi: public DrawableObjIstanced {
 
 		}
 
-		void apriCassa(int cassaDaAprire, float angoloGradi, SmokeHendler* smokeHendler, float currentFrame) {
+		void apriCassa(int cassaDaAprire, float angoloGradi, SmokeHendler* smokeHendler, float currentFrame, Audio* audioHandler) {
 			
 			//Gestisco l'eccezione sulla cassa da aprire
 			if (cassaDaAprire == -1) {
@@ -122,6 +122,9 @@ class Coperchi: public DrawableObjIstanced {
 			
 			//Aggiungo uno smoker e lo attivo
 			smokeHendler->addSmokeGenerator(currentFrame, getPosizioneIndice(cassaDaAprire));
+
+			//Play audio
+			audioHandler->openChestSoundPlay(posizioni[cassaDaAprire]);
 		}
 
 		int contaCasse() {

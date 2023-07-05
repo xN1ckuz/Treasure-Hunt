@@ -20,7 +20,7 @@
 #include "effects.h"
 #include "Coperchi.h"
 #include "renderText.h"
-#include "SFML/Audio.hpp"
+#include "audio.h"
 
 #include <iostream>
 
@@ -29,7 +29,7 @@ bool areModelsLoaded = false;
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
-void processInput(GLFWwindow* window, Coperchi* coperchiCasse, SmokeHendler* smokeHendler, float currentFrame);
+void processInput(GLFWwindow* window, Coperchi* coperchiCasse, SmokeHendler* smokeHendler, float currentFrame, Audio* audioHandler);
 unsigned int loadTexture(const char* path);
 void renderScene(DrawableObjIstanced alberi1, DrawableObjIstanced alberi2, DrawableObj terreno, DrawableObj erba, DrawableObjIstanced basiCasse, Coperchi coperchiCasse, DrawableObj cubo, SmokeHendler* smokeHendler, float currentFrame, bool ombra);
 void renderLoading(Shader* shader, DrawableObj cubo, Camera cam, GLFWwindow* window, unsigned int* texture);
@@ -158,19 +158,25 @@ int main()
 
     // tell GLFW to capture our mouse
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    
+    Audio* audioHandler = new Audio();
+    audioHandler->loadAudioFiles("resources/audio/background.wav", 0);
+    audioHandler->loadAudioFiles("resources/audio/chest.wav", 1);
 
-    // Sound Settings
-    sf::Music backgroundAudio;
 
-    backgroundAudio.openFromFile("resources/audio/background.wav");
+    //// Sound Settings
+    //sf::Music backgroundAudio;
 
-    //Background Audio Settings
-    sf::Listener::setPosition(0.0f, 0.0f, 0.0f);
-    backgroundAudio.setPosition(0.0f, 0.0f, 0.0f);
-    backgroundAudio.setPitch(1.0f);
-    backgroundAudio.setVolume(4.0f);
-    backgroundAudio.setMinDistance(5.0);
-    backgroundAudio.setLoop(true);
+    //backgroundAudio.openFromFile("resources/audio/background.wav");
+
+    ////Background Audio Settings
+    //sf::Listener::setPosition(0.0f, 0.0f, 0.0f);
+    //backgroundAudio.setPosition(0.0f, 0.0f, 0.0f);
+    //backgroundAudio.setPitch(1.0f);
+    //backgroundAudio.setVolume(4.0f);
+    //backgroundAudio.setMinDistance(5.0);
+    //backgroundAudio.setLoop(true);
+
     
 
     // glad: load all OpenGL function pointers
@@ -317,7 +323,8 @@ int main()
                 erba = DrawableObj("resources/models/grass.obj");
                 camera = Camera(terreno->updateCameraPositionOnMap(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), 2, true));
                 posVecchia = camera.Position;
-                backgroundAudio.play();
+                //backgroundAudio.play();
+                audioHandler->backgroundAudioPlay();
                 areModelsLoaded = true;
                 tempoInizioGioco = glfwGetTime();
             }
@@ -332,7 +339,7 @@ int main()
             // input
             // -----
             posVecchia = camera.Position;
-            processInput(window, &coperchiCasse, &smokeHendler, currentFrame);
+            processInput(window, &coperchiCasse, &smokeHendler, currentFrame, audioHandler);
             camera.Position = terreno->updateCameraPositionOnMap(camera.Position, posVecchia, 2, false);
             basiCasse.aggiornaPosPerCollisione(&camera.Position, posVecchia, 3.0);
             alberi1.aggiornaPosPerCollisione(&camera.Position, posVecchia, 3.0);
@@ -486,6 +493,7 @@ int main()
 
     // optional: de-allocate all resources once they've outlived their purpose:
     // ------------------------------------------------------------------------
+    audioHandler->closeAllBuffers();
     glDeleteVertexArrays(1, &skyboxVAO);
     glDeleteBuffers(1, &skyboxVAO);
     glfwTerminate();
@@ -582,7 +590,7 @@ void renderQuad()
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
 // ---------------------------------------------------------------------------------------------------------
-void processInput(GLFWwindow* window, Coperchi* coperchiCasse, SmokeHendler* smokeHendler, float currentFrame)
+void processInput(GLFWwindow* window, Coperchi* coperchiCasse, SmokeHendler* smokeHendler, float currentFrame, Audio* audioHandler)
 {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
@@ -596,7 +604,7 @@ void processInput(GLFWwindow* window, Coperchi* coperchiCasse, SmokeHendler* smo
         camera.ProcessKeyboard(RIGHT, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
         int cassaDaAprire = coperchiCasse->getCoperchioToOpen(camera.Position, 5);
-        coperchiCasse->apriCassa(cassaDaAprire, 70, smokeHendler, currentFrame);
+        coperchiCasse->apriCassa(cassaDaAprire, 70, smokeHendler, currentFrame, audioHandler);
     }
        
 }

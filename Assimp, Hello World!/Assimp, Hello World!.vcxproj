@@ -209,6 +209,7 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="audio.h" />
     <ClInclude Include="camera.h" />
     <ClInclude Include="Coperchi.h" />
     <ClInclude Include="DrawableObj.h" />
