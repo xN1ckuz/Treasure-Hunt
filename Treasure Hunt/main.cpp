@@ -194,18 +194,18 @@ int main()
 
     // build and compile shaders
     // -------------------------
-    Shader shaderloadingScreen("loading_screen.vs", "loading_screen.fs");
-    Shader simpleDepthShader("shadow_mapping_depth.vs", "shadow_mapping_depth.fs");
-    Shader simpleDepthShaderInstanced("shadow_mapping_depth_instanced.vs", "shadow_mapping_depth.fs");
-    Shader simpleDepthShaderSmoke("shadow_mapping_depth.vs", "shadow_mapping_depth_smoke.fs");
-    Shader debugDepthQuad("debug_quad.vs", "debug_quad_depth.fs");
-    Shader shaderWithoutAlpha("model_loading.vs", "model_loading.fs");
-    Shader shaderWithAlpha("model_loading.vs", "model_loading_alpha.fs");
-    Shader shaderWithAlphaInstanced("model_loading_instanced.vs", "model_loading_alpha.fs");
-    Shader shaderWithoutAlphaInstanced("model_loading_instanced.vs", "model_loading.fs");
-    Shader skyboxShader("skybox.vs", "skybox.fs");
-    Shader smokeShader("smokeShader.vs", "smokeShader.fs");
-    Shader shaderTrasp("model_loading_trasp.vs", "model_loading_trasp.fs");
+    Shader shaderloadingScreen("resources/shaders/loading_screen.vs", "resources/shaders/loading_screen.fs");
+    Shader simpleDepthShader("resources/shaders/shadow_mapping_depth.vs", "resources/shaders/shadow_mapping_depth.fs");
+    Shader simpleDepthShaderInstanced("resources/shaders/shadow_mapping_depth_instanced.vs", "resources/shaders/shadow_mapping_depth.fs");
+    Shader simpleDepthShaderSmoke("resources/shaders/shadow_mapping_depth.vs", "resources/shaders/shadow_mapping_depth_smoke.fs");
+    Shader debugDepthQuad("resources/shaders/debug_quad.vs", "resources/shaders/debug_quad_depth.fs");
+    Shader shaderWithoutAlpha("resources/shaders/model_loading.vs", "resources/shaders/model_loading.fs");
+    Shader shaderWithAlpha("resources/shaders/model_loading.vs", "resources/shaders/model_loading_alpha.fs");
+    Shader shaderWithAlphaInstanced("resources/shaders/model_loading_instanced.vs", "resources/shaders/model_loading_alpha.fs");
+    Shader shaderWithoutAlphaInstanced("resources/shaders/model_loading_instanced.vs", "resources/shaders/model_loading.fs");
+    Shader skyboxShader("resources/shaders/skybox.vs", "resources/shaders/skybox.fs");
+    Shader smokeShader("resources/shaders/smokeShader.vs", "resources/shaders/smokeShader.fs");
+    Shader shaderTrasp("resources/shaders/model_loading_trasp.vs", "resources/shaders/model_loading_trasp.fs");
 
     //load drowables
     //----------------

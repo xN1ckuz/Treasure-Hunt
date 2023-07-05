@@ -171,8 +171,6 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <None Include="debug_quad_depth.fs" />
-    <None Include="debug_quad.vs" />
     <CopyFileToFolders Include="lib\x64\release\assimp-vc142-mt.dll">
       <FileType>Document</FileType>
     </CopyFileToFolders>
@@ -185,24 +183,30 @@
     <CopyFileToFolders Include="lib\x64\release\sfml-system-2.dll">
       <FileType>Document</FileType>
     </CopyFileToFolders>
-    <None Include="loading_screen.fs" />
-    <None Include="loading_screen.vs" />
-    <None Include="model_loading.fs" />
-    <None Include="model_loading.vs" />
-    <None Include="model_loading_alpha.fs" />
-    <None Include="model_loading_instanced.vs" />
-    <None Include="model_loading_trasp.fs" />
-    <None Include="model_loading_trasp.vs" />
     <None Include="packages.config" />
-    <None Include="shadow_mapping_depth_smoke.fs" />
-    <None Include="shadow_mapping_depth.fs" />
-    <None Include="shadow_mapping_depth.vs" />
-    <None Include="shadow_mapping_depth_instanced.vs" />
-    <None Include="skybox.fs" />
-    <None Include="skybox.vs" />
-    <None Include="smokeShader.fs" />
-    <None Include="text.fs" />
-    <None Include="text.vs" />
+    <None Include="resources\shaders\anti_aliasing.fs" />
+    <None Include="resources\shaders\debug_quad.vs" />
+    <None Include="resources\shaders\debug_quad_depth.fs" />
+    <None Include="resources\shaders\loading_screen.fs" />
+    <None Include="resources\shaders\loading_screen.vs" />
+    <None Include="resources\shaders\model_loading.fs" />
+    <None Include="resources\shaders\model_loading.vs" />
+    <None Include="resources\shaders\model_loading_alpha.fs" />
+    <None Include="resources\shaders\model_loading_instanced.vs" />
+    <None Include="resources\shaders\model_loading_trasp.fs" />
+    <None Include="resources\shaders\model_loading_trasp.vs" />
+    <None Include="resources\shaders\planet.fs" />
+    <None Include="resources\shaders\planet.vs" />
+    <None Include="resources\shaders\shadow_mapping_depth.fs" />
+    <None Include="resources\shaders\shadow_mapping_depth.vs" />
+    <None Include="resources\shaders\shadow_mapping_depth_instanced.vs" />
+    <None Include="resources\shaders\shadow_mapping_depth_smoke.fs" />
+    <None Include="resources\shaders\skybox.fs" />
+    <None Include="resources\shaders\skybox.vs" />
+    <None Include="resources\shaders\smokeShader.fs" />
+    <None Include="resources\shaders\smokeShader.vs" />
+    <None Include="resources\shaders\text.fs" />
+    <None Include="resources\shaders\text.vs" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="glad.c" />

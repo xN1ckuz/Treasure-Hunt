@@ -74,61 +74,73 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="debug_quad.vs">
+    <None Include="resources\shaders\anti_aliasing.fs">
       <Filter>Resources Files\Shaders</Filter>
     </None>
-    <None Include="debug_quad_depth.fs">
+    <None Include="resources\shaders\debug_quad.vs">
       <Filter>Resources Files\Shaders</Filter>
     </None>
-    <None Include="loading_screen.fs">
+    <None Include="resources\shaders\debug_quad_depth.fs">
       <Filter>Resources Files\Shaders</Filter>
     </None>
-    <None Include="loading_screen.vs">
+    <None Include="resources\shaders\loading_screen.fs">
       <Filter>Resources Files\Shaders</Filter>
     </None>
-    <None Include="model_loading.fs">
+    <None Include="resources\shaders\loading_screen.vs">
       <Filter>Resources Files\Shaders</Filter>
     </None>
-    <None Include="model_loading.vs">
+    <None Include="resources\shaders\model_loading.fs">
       <Filter>Resources Files\Shaders</Filter>
     </None>
-    <None Include="model_loading_alpha.fs">
+    <None Include="resources\shaders\model_loading.vs">
       <Filter>Resources Files\Shaders</Filter>
     </None>
-    <None Include="model_loading_instanced.vs">
+    <None Include="resources\shaders\model_loading_alpha.fs">
       <Filter>Resources Files\Shaders</Filter>
     </None>
-    <None Include="model_loading_trasp.fs">
+    <None Include="resources\shaders\model_loading_instanced.vs">
       <Filter>Resources Files\Shaders</Filter>
     </None>
-    <None Include="model_loading_trasp.vs">
+    <None Include="resources\shaders\model_loading_trasp.fs">
       <Filter>Resources Files\Shaders</Filter>
     </None>
-    <None Include="shadow_mapping_depth.fs">
+    <None Include="resources\shaders\model_loading_trasp.vs">
       <Filter>Resources Files\Shaders</Filter>
     </None>
-    <None Include="shadow_mapping_depth.vs">
+    <None Include="resources\shaders\planet.fs">
       <Filter>Resources Files\Shaders</Filter>
     </None>
-    <None Include="shadow_mapping_depth_instanced.vs">
+    <None Include="resources\shaders\planet.vs">
       <Filter>Resources Files\Shaders</Filter>
     </None>
-    <None Include="shadow_mapping_depth_smoke.fs">
+    <None Include="resources\shaders\shadow_mapping_depth.fs">
       <Filter>Resources Files\Shaders</Filter>
     </None>
-    <None Include="skybox.fs">
+    <None Include="resources\shaders\shadow_mapping_depth.vs">
       <Filter>Resources Files\Shaders</Filter>
     </None>
-    <None Include="skybox.vs">
+    <None Include="resources\shaders\shadow_mapping_depth_instanced.vs">
       <Filter>Resources Files\Shaders</Filter>
     </None>
-    <None Include="smokeShader.fs">
+    <None Include="resources\shaders\shadow_mapping_depth_smoke.fs">
       <Filter>Resources Files\Shaders</Filter>
     </None>
-    <None Include="text.fs">
+    <None Include="resources\shaders\skybox.fs">
       <Filter>Resources Files\Shaders</Filter>
     </None>
-    <None Include="text.vs">
+    <None Include="resources\shaders\skybox.vs">
+      <Filter>Resources Files\Shaders</Filter>
+    </None>
+    <None Include="resources\shaders\smokeShader.fs">
+      <Filter>Resources Files\Shaders</Filter>
+    </None>
+    <None Include="resources\shaders\smokeShader.vs">
+      <Filter>Resources Files\Shaders</Filter>
+    </None>
+    <None Include="resources\shaders\text.fs">
+      <Filter>Resources Files\Shaders</Filter>
+    </None>
+    <None Include="resources\shaders\text.vs">
       <Filter>Resources Files\Shaders</Filter>
     </None>
   </ItemGroup>

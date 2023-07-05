@@ -36,7 +36,7 @@ int initRenderText(const unsigned int SCR_WIDTH, const unsigned int SCR_HEIGHT)
 
     // compile and setup the shader
     // ----------------------------
-    shader = new Shader("text.vs", "text.fs");
+    shader = new Shader("resources/shaders/text.vs", "resources/shaders/text.fs");
     glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(SCR_WIDTH), 0.0f, static_cast<float>(SCR_HEIGHT));
     shader->use();
     glUniformMatrix4fv(glGetUniformLocation(shader->ID, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
