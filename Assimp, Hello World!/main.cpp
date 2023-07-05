@@ -34,9 +34,10 @@ unsigned int loadTexture(const char* path);
 void renderScene(DrawableObjIstanced alberi1, DrawableObjIstanced alberi2, DrawableObj terreno, DrawableObj erba, DrawableObjIstanced basiCasse, Coperchi coperchiCasse, DrawableObj cubo, SmokeHendler* smokeHendler, float currentFrame, bool ombra);
 void renderLoading(Shader* shader, DrawableObj cubo, Camera cam, GLFWwindow* window, unsigned int* texture);
 void renderQuad();
-void renderRect(unsigned int SCR_WIDTH, unsigned int SCR_HEIGHT);
 void calculateFPS();
 unsigned int loadCubemap(vector<std::string> faces);
+void renderTrasparent(Shader* shader, DrawableObj cubo, Camera cam, GLFWwindow* window, unsigned int texture);
+void textRenderer(float tempoRim, Coperchi casseCoperchi, bool aperturaCasse, int cassaNear, float currentFrame, float tempoInizioGioco);
 
 float skyboxVertices[] = {
     // positions          
@@ -84,12 +85,12 @@ float skyboxVertices[] = {
 };
 
 // settings
-//const unsigned int SCR_WIDTH = 1366;
-//const unsigned int SCR_HEIGHT = 768;
+const unsigned int SCR_WIDTH = 1366;
+const unsigned int SCR_HEIGHT = 768;
 //const unsigned int SCR_WIDTH = 640;
 //const unsigned int SCR_HEIGHT = 360;
-const unsigned int SCR_WIDTH = 2560;
-const unsigned int SCR_HEIGHT = 1440;
+//const unsigned int SCR_WIDTH = 2560;
+//const unsigned int SCR_HEIGHT = 1440;
 
 // camera
 Camera camera;
@@ -121,7 +122,7 @@ ShadowBox shadowBox = ShadowBox(nearDist, farDist, SCR_WIDTH, SCR_HEIGHT, &camer
 
 // Tempo di gioco
 // -------------
-float tempoMassimo = 5 * (60);
+float tempoMassimo = 1 * (10);
 
 int main()
 {   
@@ -143,7 +144,7 @@ int main()
     //GLFWmonitor *monitor = glfwGetPrimaryMonitor();
     //const GLFWvidmode* mode = glfwGetVideoMode(monitor);
 
-    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, TITOLO_APP.data(), glfwGetPrimaryMonitor(), NULL);
+    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, TITOLO_APP.data(), NULL, NULL);
     if (window == NULL)
     {
         std::cout << "Failed to create GLFW window" << std::endl;
@@ -198,10 +199,11 @@ int main()
     Shader shaderWithoutAlphaInstanced("model_loading_instanced.vs", "model_loading.fs");
     Shader skyboxShader("skybox.vs", "skybox.fs");
     Shader smokeShader("smokeShader.vs", "smokeShader.fs");
+    Shader shaderTrasp("model_loading_trasp.vs", "model_loading_trasp.fs");
 
     //load drowables
     //----------------
-    Terrain* terreno;
+    Terrain* terreno{};
     DrawableObj erba;
     Coperchi coperchiCasse = Coperchi("chests.txt", "resources/models/chest1.obj");
     DrawableObjIstanced basiCasse = DrawableObjIstanced("chests.txt", "resources/models/chest2.obj");
@@ -234,7 +236,20 @@ int main()
         "resources/skybox/front.jpg",
         "resources/skybox/back.jpg"
     };
+
+    vector<std::string> cubeFinish
+    {
+        "resources/loading/cube/right.png",
+        "resources/loading/cube/left.png",
+        "resources/loading/cube/top.png",
+        "resources/loading/cube/bottom.png",
+        "resources/loading/cube/front.png",
+        "resources/loading/cube/back.png"
+    };
+
     unsigned int cubemapTexture = loadCubemap(faces);
+
+    unsigned int loadingTextureCube = loadCubemap(cubeFinish);
 
     unsigned int loadingTexture = loadTexture("resources/loading/loading_screen.jpg");
 
@@ -267,7 +282,7 @@ int main()
     // shader configuration
     // --------------------
     skyboxShader.use();
-    skyboxShader.setInt("skybox", 0);
+    skyboxShader.setInt("skybox", 4);
 
     shaderWithoutAlpha.use();
     shaderWithoutAlpha.setInt("shadowMap", 4);
@@ -290,7 +305,8 @@ int main()
     // render loop
     // -----------
     int frame = 0;
-    float tempoInizioGioco = glfwGetTime();
+    float tempoInizioGioco = 0;
+    bool aperturaCasse = true;
     while (!glfwWindowShouldClose(window))
     {
         if (frame == 0) {
@@ -303,10 +319,12 @@ int main()
                 posVecchia = camera.Position;
                 backgroundAudio.play();
                 areModelsLoaded = true;
+                tempoInizioGioco = glfwGetTime();
             }
             //render as always
             // per-frame time logic
             // --------------------
+            
             float currentFrame = glfwGetTime();
             deltaTime = currentFrame - lastFrame;
             lastFrame = currentFrame;
@@ -320,6 +338,7 @@ int main()
             alberi1.aggiornaPosPerCollisione(&camera.Position, posVecchia, 3.0);
             alberi2.aggiornaPosPerCollisione(&camera.Position, posVecchia, 2.5);
             int cassaNear = coperchiCasse.getCoperchioToOpen(camera.Position, 5);
+
             //cout << "Camera: "<< "Pos x: " << camera.Position.x << "Pos y: " << camera.Position.y << "Pos z: " << camera.Position.z << endl;
             //cout << "Luce: "<< "Pos x: " << lightPos.x << "Pos y: " << lightPos.y << "Pos z: " << lightPos.z << endl;
 
@@ -371,7 +390,7 @@ int main()
             skyboxShader.setMat4("projection", projection);
             // skybox cube
             glBindVertexArray(skyboxVAO);
-            glActiveTexture(GL_TEXTURE0);
+            glActiveTexture(GL_TEXTURE4);
             glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
             glDepthMask(GL_FALSE);
             glDrawArrays(GL_TRIANGLES, 0, 36);
@@ -419,6 +438,10 @@ int main()
             smokeShader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
             smokeShader.setInt("texture_diffuse1", 0);
 
+            shaderTrasp.use();
+            shaderTrasp.setMat4("view", view);
+            shaderTrasp.setMat4("projection", projection);
+
             terreno->setShaders(&shaderWithoutAlpha);
             erba.setShaders(&shaderWithAlpha);
             alberi1.setShaders(&shaderWithAlphaInstanced);
@@ -432,19 +455,12 @@ int main()
             glActiveTexture(GL_TEXTURE4);
             glBindTexture(GL_TEXTURE_2D, depthMap);
             renderScene(alberi1, alberi2, *terreno, erba, basiCasse, coperchiCasse, cubo, &smokeHendler, currentFrame, true);
-            RenderText(("FPS: " + std::to_string(fps)).c_str(), 10, SCR_HEIGHT - 20, 0.3f, glm::vec3(1.0f, 1.0f, 1.0f));
             float tempoRimasto = tempoMassimo - (currentFrame - tempoInizioGioco);
-            string tempo;
-            if (int(tempoRimasto) % 60 < 10) {
-                tempo = "Tempo: " + std::to_string(int(tempoRimasto) / 60) + "min e " + "0" + std::to_string(int(tempoRimasto) % 60) + "sec";
-            }
-            else {
-                tempo = "Tempo: " + std::to_string(int(tempoRimasto) / 60) + "min e " + std::to_string(int(tempoRimasto) % 60) + "sec";
-            }
-            RenderText((tempo).c_str(), (SCR_WIDTH - getWidthOfString(tempo)) / 2, SCR_HEIGHT - getHeightOfString(tempo), 0.6f, glm::vec3(1.0f, 0.0f, 0.0f));
-            RenderText(("Casse Rimanenti: " + std::to_string(coperchiCasse.contaCasse())).c_str(), 10, 10, 0.6f, glm::vec3(1.0f, 1.0f, 1.0f));
-            if (cassaNear != -1) {
-                RenderText("SPACE per aprire", (SCR_WIDTH - getWidthOfString("SPACE per aprire")) / 2, (SCR_HEIGHT - getHeightOfString("SPACE per aprire")) / 2, 0.6f, glm::vec3(1.0f, 1.0f, 1.0f));
+            textRenderer(tempoRimasto, coperchiCasse, aperturaCasse, cassaNear, currentFrame, tempoInizioGioco);
+            if (int(tempoRimasto) == 0) {
+                tempoMassimo = currentFrame - tempoInizioGioco; //Tempo sempre 0
+                renderTrasparent(&shaderTrasp, cubo, camera, window, loadingTextureCube);
+                aperturaCasse = false;
             }
 
             // render Depth map to quad for visual debugging
@@ -683,6 +699,15 @@ void calculateFPS() {
     }
 }
 
+// loads a cubemap texture from 6 individual texture faces
+// order:
+// +X (right)
+// -X (left)
+// +Y (top)
+// -Y (bottom)
+// +Z (front) 
+// -Z (back)
+// -------------------------------------------------------
 unsigned int loadCubemap(vector<std::string> faces)
 {
     unsigned int textureID;
@@ -718,19 +743,6 @@ void renderLoading(Shader* shader, DrawableObj cubo, Camera cam, GLFWwindow* win
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // also clear the depth buffer now!
 
-    //glm::mat4 view = glm::mat4(glm::mat3(camera.GetViewMatrix())); // remove translation from the view matrix
-    //glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 15.0f);
-
-    //shader->use();
-    //shader->setMat4("view", view);
-    //shader->setMat4("projection", projection);
-    //shader->setMat4("model", glm::mat4(1.0));
-   
-    //shader->setInt("loadingTex", 0);
-    //glActiveTexture(GL_TEXTURE0);
-    //glBindTexture(GL_TEXTURE_2D, *texture);
-    //renderQuad();
-
     shader->use();
     shader->setFloat("near_plane", NEAR_PLANE);
     shader->setFloat("far_plane", FAR_PLANE);
@@ -741,4 +753,47 @@ void renderLoading(Shader* shader, DrawableObj cubo, Camera cam, GLFWwindow* win
 
     glfwSwapBuffers(window);
     glfwPollEvents();
+}
+
+void renderTrasparent(Shader* shader, DrawableObj cubo, Camera cam, GLFWwindow* window, unsigned int texture)
+{
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    glm::mat4 view = glm::mat4(glm::mat3(camera.GetViewMatrix()));
+    
+    shader->use();
+    shader->setInt("texture_diffuse1", texture);
+    cubo.setShaders(shader);
+
+    cubo.traslate(camera.Position);
+    cubo.rotate(camera.Up, camera.Yaw);
+    cubo.rotate(camera.Right, camera.Pitch);
+    cubo.Draw();
+
+    glDisable(GL_BLEND);
+
+    glfwSwapBuffers(window);
+    glfwPollEvents();
+
+}
+
+void textRenderer(float tempoRim, Coperchi casseCoperchi, bool aperturaCasse, int cassaNear, float currentFrame, float tempoInizioGioco) 
+{
+    string tempo;
+    if (int(tempoRim) % 60 < 10) {
+        tempo = "Tempo: " + std::to_string(int(tempoRim) / 60) + "min e " + "0" + std::to_string(int(tempoRim) % 60) + "sec";
+    }
+    else {
+        tempo = "Tempo: " + std::to_string(int(tempoRim) / 60) + "min e " + std::to_string(int(tempoRim) % 60) + "sec";
+    }
+    if (aperturaCasse) {
+        RenderText((tempo).c_str(), (SCR_WIDTH - getWidthOfString(tempo)) / 2, SCR_HEIGHT - getHeightOfString(tempo), 0.6f, glm::vec3(1.0f, 0.0f, 0.0f));
+    }
+    if (aperturaCasse) {
+        RenderText(("Casse Rimanenti: " + std::to_string(casseCoperchi.contaCasse())).c_str(), 10, 10, 0.6f, glm::vec3(1.0f, 1.0f, 1.0f));
+    }
+    if (cassaNear != -1) {
+        RenderText("SPACE per aprire", (SCR_WIDTH - getWidthOfString("SPACE per aprire"))/2, (SCR_HEIGHT - getHeightOfString("SPACE per aprire")) / 2, 0.6f, glm::vec3(1.0f, 1.0f, 1.0f));
+    }
 }

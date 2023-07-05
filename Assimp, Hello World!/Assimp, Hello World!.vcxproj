@@ -135,7 +135,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>.\lib\x64\debug\</AdditionalLibraryDirectories>
-      <AdditionalDependencies>freetype.lib;assimp-vc142-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>freetype.lib;sfml-audio.lib;assimp-vc142-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>copy /Y "$(ProjectDir)\lib\x64\debug\assimp-vc142-mtd.dll" "$(TargetDir)"</Command>
@@ -158,7 +158,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>.\lib\x64\release\</AdditionalLibraryDirectories>
-      <AdditionalDependencies>freetype.lib;assimp-vc142-mt.lib;sfml-audio.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>freetype.lib;sfml-audio.lib;assimp-vc142-mt.lib;sfml-audio.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <HeapReserveSize>
       </HeapReserveSize>
       <StackReserveSize>
@@ -191,6 +191,8 @@
     <None Include="model_loading.vs" />
     <None Include="model_loading_alpha.fs" />
     <None Include="model_loading_instanced.vs" />
+    <None Include="model_loading_trasp.fs" />
+    <None Include="model_loading_trasp.vs" />
     <None Include="packages.config" />
     <None Include="shadow_mapping_depth_smoke.fs" />
     <None Include="shadow_mapping_depth.fs" />
