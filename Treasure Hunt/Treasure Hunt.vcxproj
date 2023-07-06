@@ -225,6 +225,7 @@
     <ClInclude Include="kdtree.h" />
     <ClInclude Include="Punto3D.h" />
     <ClInclude Include="renderText.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="ShadowBox.h" />
     <ClInclude Include="Terrain.h" />
     <ClInclude Include="mesh.h" />
@@ -232,6 +233,12 @@
     <ClInclude Include="shader_m.h" />
     <ClInclude Include="stb_image.h" />
     <ClInclude Include="TriangoloPt.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Treasure Hunt.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="resources\icons\icon.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

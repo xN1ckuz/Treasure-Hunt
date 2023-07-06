@@ -159,6 +159,14 @@ int main()
 
     // tell GLFW to capture our mouse
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+    int width, height, channels;														//Window Icon
+    unsigned char* pixels = stbi_load("resources/icons/icon.png", &width, &height, &channels, 4);
+    GLFWimage images[1];
+    images[0].width = width;
+    images[0].height = height;
+    images[0].pixels = pixels;
+    glfwSetWindowIcon(window, 1, images);
     
     Audio* audioHandler = new Audio();
     audioHandler->loadAudioFiles("resources/audio/background.wav", 0);
