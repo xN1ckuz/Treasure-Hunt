@@ -93,9 +93,9 @@ class CollectiblesManager {
 				for (int i = 0; i < posizioniCollect.size(); i++) {
 					if (trovatiCollectibles[i] == false) {
 						collectibles[i]->traslate(posizioniCollect[i]);
-						collectibles[i]->rotate(glm::vec3(0.0f, 0.0f, -1.0f), glm::radians(rotazioniCollect[i].y));
-						collectibles[i]->rotate(glm::vec3(0.0f, 1.0f, 0.0f), glm::radians(rotazioniCollect[i].z));
-						collectibles[i]->rotate(glm::vec3(1.0f, 0.0f, 0.0f), glm::radians(rotazioniCollect[i].x));
+						collectibles[i]->rotate(glm::vec3(0.0f, 1.0f, 0.0f), rotazioniCollect[i].y);
+						collectibles[i]->rotate(glm::vec3(0.0f, 0.0f, 1.0f), rotazioniCollect[i].z);
+						collectibles[i]->rotate(glm::vec3(1.0f, 0.0f, 0.0f), rotazioniCollect[i].x);
 						collectibles[i]->traslate(glm::vec3(0.0f, 0.0f, 0.0f));
 						collectibles[i]->Draw();
 					}

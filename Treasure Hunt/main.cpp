@@ -123,7 +123,7 @@ ShadowBox shadowBox = ShadowBox(nearDist, farDist, SCR_WIDTH, SCR_HEIGHT, &camer
 
 // Tempo di gioco
 // -------------
-float tempoMassimo = 5 * (60);
+float tempoMassimo = 1 * (60);
 
 int main()
 {   
@@ -496,7 +496,7 @@ int main()
             renderScene(alberi1, alberi2, *terreno, erba, basiCasse, *collectiblesManager, cubo, &smokeHendler, currentFrame, true);
             float tempoRimasto = tempoMassimo - (currentFrame - tempoInizioGioco);
             textRenderer(tempoRimasto, *coperchiCasse, aperturaCollectible, nearDistIndex, currentFrame, tempoInizioGioco);
-            if (int(tempoRimasto) == 0) {
+            if (int(tempoRimasto) == 0 || coperchiCasse->contaCasse() == 0) {
                 tempoMassimo = currentFrame - tempoInizioGioco; //Tempo sempre 0
                 renderTrasparent(&shaderTrasp, cubo, camera, window, loadingTextureCube);
                 aperturaCollectible = false;
@@ -631,7 +631,9 @@ void processInput(GLFWwindow* window, CollectiblesManager* collectiblesManager, 
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         camera.ProcessKeyboard(RIGHT, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
-        collectiblesManager->raccogliCollectibles(camera.Position, 5.0, smokeHendler, currentFrame, audioHandler, &tempoMassimo, aperturaCollectible);
+        if (aperturaCollectible == true) {
+            collectiblesManager->raccogliCollectibles(camera.Position, 5.0, smokeHendler, currentFrame, audioHandler, &tempoMassimo, aperturaCollectible);
+        }
     }
 }
 
@@ -823,16 +825,23 @@ void textRenderer(float tempoRim, Coperchi casseCoperchi, bool aperturaCollectib
     }
     if (aperturaCollectible) {
         RenderText((tempo).c_str(), (SCR_WIDTH - getWidthOfString(tempo)) / 2, SCR_HEIGHT - getHeightOfString(tempo), 0.6f, glm::vec3(1.0f, 0.0f, 0.0f));
-    }
-    if (aperturaCollectible) {
         RenderText(("Casse Rimanenti: " + std::to_string(casseCoperchi.contaCasse())).c_str(), 10, 10, 0.6f, glm::vec3(1.0f, 1.0f, 1.0f));
-    }
-    if (nearDistIndex.i != -1) {
-        if (nearDistIndex.tipo == 0) {
-            RenderText("SPACE per aprire", (SCR_WIDTH - getWidthOfString("SPACE per aprire")) / 2, (SCR_HEIGHT - getHeightOfString("SPACE per aprire")) / 2, 0.6f, glm::vec3(1.0f, 1.0f, 1.0f));
+        if (nearDistIndex.i != -1) {
+            if (nearDistIndex.tipo == 0) {
+                RenderText("SPACE per aprire", (SCR_WIDTH - getWidthOfString("SPACE per aprire")) / 2, (SCR_HEIGHT - getHeightOfString("SPACE per aprire")) / 2, 0.6f, glm::vec3(1.0f, 1.0f, 1.0f));
+            }
+            else {
+                RenderText("SPACE per prendere", (SCR_WIDTH - getWidthOfString("SPACE per prendere")) / 2, (SCR_HEIGHT - getHeightOfString("SPACE per prendere")) / 2, 0.6f, glm::vec3(1.0f, 1.0f, 1.0f));
+            }
         }
-        else {
-            RenderText("SPACE per prendere", (SCR_WIDTH - getWidthOfString("SPACE per prendere")) / 2, (SCR_HEIGHT - getHeightOfString("SPACE per prendere")) / 2, 0.6f, glm::vec3(1.0f, 1.0f, 1.0f));
+    }
+    else{
+        if (casseCoperchi.contaCasse() == 0) {
+            RenderText("Hai vinto", (SCR_WIDTH - getWidthOfString("Hai vinto")) / 2, (SCR_HEIGHT - getHeightOfString("Hai vinto")) / 2, 0.6f, glm::vec3(1.0f, 1.0f, 1.0f));
+        }
+        if (casseCoperchi.contaCasse() != 0) {
+            RenderText("Hai perso", (SCR_WIDTH - getWidthOfString("Hai perso")) / 2, (SCR_HEIGHT - getHeightOfString("Hai perso")) / 2, 0.6f, glm::vec3(1.0f, 1.0f, 1.0f));
         }
     }
+    
 }
