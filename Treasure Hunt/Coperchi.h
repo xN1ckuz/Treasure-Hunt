@@ -147,7 +147,8 @@ class Coperchi: public DrawableObjIstanced {
 				modelCoperchio = glm::rotate(modelCoperchio, glm::radians(rotazioni[i].x), glm::vec3(1.0f, 0.0f, 0.0f));
 				modelCoperchio = glm::translate(modelCoperchio, glm::vec3(0, 0, 0));
 				modelCoperchio = glm::scale(modelCoperchio, glm::vec3(1.5, 1.5, 1.5));
-				modelMatricesCoperchio[i] = modelCoperchio;
+				//modelMatricesCoperchio[i] = modelCoperchio;
+				modelMatricesCoperchio.push_back(modelCoperchio);
 			}
 
 			// store instance data in an array buffer
@@ -158,9 +159,17 @@ class Coperchi: public DrawableObjIstanced {
 			glBindBuffer(GL_ARRAY_BUFFER, 0);
 		}
 
+		vector<bool> getBoolAperti(){
+			return coperchiAperti;
+		}
+
+		vector<glm::vec3> getPosizioni(){
+			return posizioni;
+		}
+
 	private:
 		vector<bool> coperchiAperti;
-		glm::mat4 modelMatricesCoperchio[5];
+		vector<glm::mat4> modelMatricesCoperchio;
 		unsigned int bufferCoperchio;
 
 		void caricaPosizioniEOrientamento(string dirFilePosizioni) {
@@ -197,8 +206,8 @@ class Coperchi: public DrawableObjIstanced {
 				//cout << "gamma: " << gamma << endl;
 				fin.ignore(2, '\n');
 
-				posizioni.push_back(glm::vec3(x, z, -y));
-				rotazioni.push_back(glm::vec3(alpha, beta, gamma));
+				//posizioni.push_back(glm::vec3(x, z, -y));
+				//rotazioni.push_back(glm::vec3(alpha, beta, gamma));
 				coperchiAperti.push_back(false);
 			}
 			fin.close();

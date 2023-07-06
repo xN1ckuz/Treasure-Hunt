@@ -57,6 +57,9 @@
     <ClInclude Include="TriangoloPt.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="CollectiblesManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="lib\x64\release\assimp-vc142-mt.dll">

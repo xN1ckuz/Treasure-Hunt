@@ -1,0 +1,42 @@
+# Blender 3.5.1 MTL File: 'None'
+# www.blender.org
+
+newmtl st_fist
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 1
+map_Kd textures/kompas.jpg
+
+newmtl st_gold
+Ns 10.000005
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 1
+map_Kd textures/metalyel.jpg
+
+newmtl st_red
+Ns 70.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.630000 0.630000 0.630000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd textures/metalRed.jpg
+
+newmtl standart_metal
+Ns 43.000011
+Ka 1.000000 1.000000 1.000000
+Ks 0.666000 0.666000 0.666000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd textures/Metal 6.jpg

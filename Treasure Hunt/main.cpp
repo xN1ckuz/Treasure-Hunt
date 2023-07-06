@@ -21,6 +21,7 @@
 #include "Coperchi.h"
 #include "renderText.h"
 #include "audio.h"
+#include "CollectiblesManager.h"
 
 #include <iostream>
 
@@ -29,15 +30,15 @@ bool areModelsLoaded = false;
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
-void processInput(GLFWwindow* window, Coperchi* coperchiCasse, SmokeHendler* smokeHendler, float currentFrame, Audio* audioHandler);
+void processInput(GLFWwindow* window, CollectiblesManager* collectiblesManager, SmokeHendler* smokeHendler, float currentFrame, Audio* audioHandler, float* tempoMax, bool aperturaCollectible);
 unsigned int loadTexture(const char* path);
-void renderScene(DrawableObjIstanced alberi1, DrawableObjIstanced alberi2, DrawableObj terreno, DrawableObj erba, DrawableObjIstanced basiCasse, Coperchi coperchiCasse, DrawableObj cubo, SmokeHendler* smokeHendler, float currentFrame, bool ombra);
+void renderScene(DrawableObjIstanced alberi1, DrawableObjIstanced alberi2, DrawableObj terreno, DrawableObj erba, DrawableObjIstanced basiCasse, CollectiblesManager collectiblesManager, DrawableObj cubo, SmokeHendler* smokeHendler, float currentFrame, bool ombra);
 void renderLoading(Shader* shader, DrawableObj cubo, Camera cam, GLFWwindow* window, unsigned int* texture);
 void renderQuad();
 void calculateFPS();
 unsigned int loadCubemap(vector<std::string> faces);
 void renderTrasparent(Shader* shader, DrawableObj cubo, Camera cam, GLFWwindow* window, unsigned int texture);
-void textRenderer(float tempoRim, Coperchi casseCoperchi, bool aperturaCasse, int cassaNear, float currentFrame, float tempoInizioGioco);
+void textRenderer(float tempoRim, Coperchi casseCoperchi, bool aperturaCasse, CollectiblesManager::distEindex nearDistIndex, float currentFrame, float tempoInizioGioco);
 
 float skyboxVertices[] = {
     // positions          
@@ -122,7 +123,7 @@ ShadowBox shadowBox = ShadowBox(nearDist, farDist, SCR_WIDTH, SCR_HEIGHT, &camer
 
 // Tempo di gioco
 // -------------
-float tempoMassimo = 1 * (10);
+float tempoMassimo = 5 * (60);
 
 int main()
 {   
@@ -211,12 +212,23 @@ int main()
     //----------------
     Terrain* terreno{};
     DrawableObj erba;
-    Coperchi coperchiCasse = Coperchi("chests.txt", "resources/models/chest1.obj");
+    DrawableObj* map = new DrawableObj("resources/models/map.obj");
+    DrawableObj* binocular = new DrawableObj("resources/models/binocular.obj");
+    DrawableObj* compass = new DrawableObj("resources/models/compass.obj");
+    Coperchi* coperchiCasse = new Coperchi("chests.txt", "resources/models/chest1.obj");
     DrawableObjIstanced basiCasse = DrawableObjIstanced("chests.txt", "resources/models/chest2.obj");
     DrawableObjIstanced alberi1 = DrawableObjIstanced("redwood_01.txt", "resources/models/redwood_01.obj");
     DrawableObjIstanced alberi2 = DrawableObjIstanced("redwood_02.txt", "resources/models/redwood_02.obj");
     SmokeHendler smokeHendler = SmokeHendler("resources/cloud/cloud.obj", 100, 0.5, 10);
     DrawableObj cubo = DrawableObj("resources/loading/loading_screen.obj");
+
+    CollectiblesManager* collectiblesManager = new CollectiblesManager();
+    collectiblesManager->addCoperchi(coperchiCasse);
+    collectiblesManager->addDrawableObj(map);
+    collectiblesManager->addDrawableObj(binocular);
+    collectiblesManager->addDrawableObj(compass);
+    collectiblesManager->caricaPosizioniEOrientamento("collectibles.txt");
+
     glm::vec3 posVecchia;
 
     initRenderText(SCR_WIDTH, SCR_HEIGHT);
@@ -312,7 +324,7 @@ int main()
     // -----------
     int frame = 0;
     float tempoInizioGioco = 0;
-    bool aperturaCasse = true;
+    bool aperturaCollectible = true;
     while (!glfwWindowShouldClose(window))
     {
         if (frame == 0) {
@@ -339,12 +351,20 @@ int main()
             // input
             // -----
             posVecchia = camera.Position;
-            processInput(window, &coperchiCasse, &smokeHendler, currentFrame, audioHandler);
+            processInput(window, collectiblesManager, &smokeHendler, currentFrame, audioHandler, &tempoMassimo, aperturaCollectible);
+
+            // collisioni
+            // -----
             camera.Position = terreno->updateCameraPositionOnMap(camera.Position, posVecchia, 2, false);
             basiCasse.aggiornaPosPerCollisione(&camera.Position, posVecchia, 3.0);
             alberi1.aggiornaPosPerCollisione(&camera.Position, posVecchia, 3.0);
             alberi2.aggiornaPosPerCollisione(&camera.Position, posVecchia, 2.5);
-            int cassaNear = coperchiCasse.getCoperchioToOpen(camera.Position, 5);
+            collectiblesManager->aggiornaPosPerCollisione(&camera.Position, posVecchia, 2.0);
+
+            // verifico la vicinanza ad un collezionabile
+            // -----
+            CollectiblesManager::distEindex nearDistIndex = collectiblesManager->isNearcollectibles(camera.Position, 5.0);
+            //int cassaNear = coperchiCasse.getCoperchioToOpen(camera.Position, 5);
 
             //cout << "Camera: "<< "Pos x: " << camera.Position.x << "Pos y: " << camera.Position.y << "Pos z: " << camera.Position.z << endl;
             //cout << "Luce: "<< "Pos x: " << lightPos.x << "Pos y: " << lightPos.y << "Pos z: " << lightPos.z << endl;
@@ -372,16 +392,18 @@ int main()
             alberi1.setShaders(&simpleDepthShaderInstanced);
             alberi2.setShaders(&simpleDepthShaderInstanced);
             basiCasse.setShaders(&simpleDepthShaderInstanced);
-            coperchiCasse.setShaders(&simpleDepthShaderInstanced);
+            coperchiCasse->setShaders(&simpleDepthShaderInstanced);
             smokeHendler.setShaders(&simpleDepthShaderSmoke);
-
             cubo.setShaders(&simpleDepthShader);
+            map->setShaders(&simpleDepthShader);
+            binocular->setShaders(&simpleDepthShader);
+            compass->setShaders(&simpleDepthShader);
 
             glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
             glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
             glClear(GL_DEPTH_BUFFER_BIT);
 
-            renderScene(alberi1, alberi2, *terreno, erba, basiCasse, coperchiCasse, cubo, &smokeHendler, currentFrame, true);
+            renderScene(alberi1, alberi2, *terreno, erba, basiCasse, *collectiblesManager, cubo, &smokeHendler, currentFrame, true);
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
             // reset viewport
@@ -454,20 +476,22 @@ int main()
             alberi1.setShaders(&shaderWithAlphaInstanced);
             alberi2.setShaders(&shaderWithAlphaInstanced);
             basiCasse.setShaders(&shaderWithoutAlphaInstanced);
-            coperchiCasse.setShaders(&shaderWithoutAlphaInstanced);
+            coperchiCasse->setShaders(&shaderWithoutAlphaInstanced);
             smokeHendler.setShaders(&smokeShader);
-
             cubo.setShaders(&shaderWithoutAlpha);
+            map->setShaders(&shaderWithAlpha);
+            binocular->setShaders(&shaderWithAlpha);
+            compass->setShaders(&shaderWithAlpha);
 
             glActiveTexture(GL_TEXTURE4);
             glBindTexture(GL_TEXTURE_2D, depthMap);
-            renderScene(alberi1, alberi2, *terreno, erba, basiCasse, coperchiCasse, cubo, &smokeHendler, currentFrame, true);
+            renderScene(alberi1, alberi2, *terreno, erba, basiCasse, *collectiblesManager, cubo, &smokeHendler, currentFrame, true);
             float tempoRimasto = tempoMassimo - (currentFrame - tempoInizioGioco);
-            textRenderer(tempoRimasto, coperchiCasse, aperturaCasse, cassaNear, currentFrame, tempoInizioGioco);
+            textRenderer(tempoRimasto, *coperchiCasse, aperturaCollectible, nearDistIndex, currentFrame, tempoInizioGioco);
             if (int(tempoRimasto) == 0) {
                 tempoMassimo = currentFrame - tempoInizioGioco; //Tempo sempre 0
                 renderTrasparent(&shaderTrasp, cubo, camera, window, loadingTextureCube);
-                aperturaCasse = false;
+                aperturaCollectible = false;
             }
 
             // render Depth map to quad for visual debugging
@@ -502,7 +526,7 @@ int main()
 
 // renders the 3D scene
 // --------------------
-void renderScene(DrawableObjIstanced alberi1, DrawableObjIstanced alberi2, DrawableObj terreno, DrawableObj erba, DrawableObjIstanced basiCasse, Coperchi coperchiCasse, DrawableObj cubo, SmokeHendler* smokeHendler, float currentFrame, bool ombra)
+void renderScene(DrawableObjIstanced alberi1, DrawableObjIstanced alberi2, DrawableObj terreno, DrawableObj erba, DrawableObjIstanced basiCasse, CollectiblesManager collectiblesManager, DrawableObj cubo, SmokeHendler* smokeHendler, float currentFrame, bool ombra)
 {   
     //floor
     terreno.traslate(glm::vec3(0.0f, -0.2f, 0.0f));
@@ -516,11 +540,7 @@ void renderScene(DrawableObjIstanced alberi1, DrawableObjIstanced alberi2, Drawa
     }
     basiCasse.Draw();
 
-    if (ombra) {
-        coperchiCasse.getShader()->use();
-        coperchiCasse.getShader()->setFloat("soglia", 0.5);
-    }
-    coperchiCasse.Draw();
+    collectiblesManager.drawCollectibles(ombra);
 
     //Per gli oggetti trasparenti
     glEnable(GL_BLEND);
@@ -590,7 +610,7 @@ void renderQuad()
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
 // ---------------------------------------------------------------------------------------------------------
-void processInput(GLFWwindow* window, Coperchi* coperchiCasse, SmokeHendler* smokeHendler, float currentFrame, Audio* audioHandler)
+void processInput(GLFWwindow* window, CollectiblesManager* collectiblesManager, SmokeHendler* smokeHendler, float currentFrame, Audio* audioHandler, float *tempoMax, bool aperturaCollectible)
 {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
@@ -603,10 +623,8 @@ void processInput(GLFWwindow* window, Coperchi* coperchiCasse, SmokeHendler* smo
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         camera.ProcessKeyboard(RIGHT, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
-        int cassaDaAprire = coperchiCasse->getCoperchioToOpen(camera.Position, 5);
-        coperchiCasse->apriCassa(cassaDaAprire, 70, smokeHendler, currentFrame, audioHandler);
+        collectiblesManager->raccogliCollectibles(camera.Position, 5.0, smokeHendler, currentFrame, audioHandler, &tempoMassimo, aperturaCollectible);
     }
-       
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
@@ -786,7 +804,7 @@ void renderTrasparent(Shader* shader, DrawableObj cubo, Camera cam, GLFWwindow* 
 
 }
 
-void textRenderer(float tempoRim, Coperchi casseCoperchi, bool aperturaCasse, int cassaNear, float currentFrame, float tempoInizioGioco) 
+void textRenderer(float tempoRim, Coperchi casseCoperchi, bool aperturaCollectible, CollectiblesManager::distEindex nearDistIndex, float currentFrame, float tempoInizioGioco)
 {
     string tempo;
     if (int(tempoRim) % 60 < 10) {
@@ -795,13 +813,18 @@ void textRenderer(float tempoRim, Coperchi casseCoperchi, bool aperturaCasse, in
     else {
         tempo = "Tempo: " + std::to_string(int(tempoRim) / 60) + "min e " + std::to_string(int(tempoRim) % 60) + "sec";
     }
-    if (aperturaCasse) {
+    if (aperturaCollectible) {
         RenderText((tempo).c_str(), (SCR_WIDTH - getWidthOfString(tempo)) / 2, SCR_HEIGHT - getHeightOfString(tempo), 0.6f, glm::vec3(1.0f, 0.0f, 0.0f));
     }
-    if (aperturaCasse) {
+    if (aperturaCollectible) {
         RenderText(("Casse Rimanenti: " + std::to_string(casseCoperchi.contaCasse())).c_str(), 10, 10, 0.6f, glm::vec3(1.0f, 1.0f, 1.0f));
     }
-    if (cassaNear != -1) {
-        RenderText("SPACE per aprire", (SCR_WIDTH - getWidthOfString("SPACE per aprire"))/2, (SCR_HEIGHT - getHeightOfString("SPACE per aprire")) / 2, 0.6f, glm::vec3(1.0f, 1.0f, 1.0f));
+    if (nearDistIndex.i != -1) {
+        if (nearDistIndex.tipo == 0) {
+            RenderText("SPACE per aprire", (SCR_WIDTH - getWidthOfString("SPACE per aprire")) / 2, (SCR_HEIGHT - getHeightOfString("SPACE per aprire")) / 2, 0.6f, glm::vec3(1.0f, 1.0f, 1.0f));
+        }
+        else {
+            RenderText("SPACE per prendere", (SCR_WIDTH - getWidthOfString("SPACE per prendere")) / 2, (SCR_HEIGHT - getHeightOfString("SPACE per prendere")) / 2, 0.6f, glm::vec3(1.0f, 1.0f, 1.0f));
+        }
     }
 }

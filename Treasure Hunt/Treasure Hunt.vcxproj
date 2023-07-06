@@ -163,8 +163,10 @@
       </HeapReserveSize>
       <StackReserveSize>
       </StackReserveSize>
-      <HeapCommitSize>2000000</HeapCommitSize>
-      <StackCommitSize>2000000</StackCommitSize>
+      <HeapCommitSize>
+      </HeapCommitSize>
+      <StackCommitSize>
+      </StackCommitSize>
     </Link>
     <PostBuildEvent>
       <Command>copy /Y "$(ProjectDir)lib\x64\release\assimp-vc142-mt.dll" "$(TargetDir)"</Command>
@@ -215,6 +217,7 @@
   <ItemGroup>
     <ClInclude Include="audio.h" />
     <ClInclude Include="camera.h" />
+    <ClInclude Include="CollectiblesManager.h" />
     <ClInclude Include="Coperchi.h" />
     <ClInclude Include="DrawableObj.h" />
     <ClInclude Include="DrawableObjIstanced.h" />
