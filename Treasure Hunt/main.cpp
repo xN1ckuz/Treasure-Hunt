@@ -123,7 +123,7 @@ ShadowBox shadowBox = ShadowBox(nearDist, farDist, SCR_WIDTH, SCR_HEIGHT, &camer
 
 // Tempo di gioco
 // -------------
-float tempoMassimo = 1 * (60);
+float tempoMassimo = 5 * (60);
 
 int main()
 {   
@@ -831,7 +831,7 @@ void textRenderer(float tempoRim, Coperchi casseCoperchi, bool aperturaCollectib
                 RenderText("SPACE per aprire", (SCR_WIDTH - getWidthOfString("SPACE per aprire")) / 2, (SCR_HEIGHT - getHeightOfString("SPACE per aprire")) / 2, 0.6f, glm::vec3(1.0f, 1.0f, 1.0f));
             }
             else {
-                RenderText("SPACE per prendere", (SCR_WIDTH - getWidthOfString("SPACE per prendere")) / 2, (SCR_HEIGHT - getHeightOfString("SPACE per prendere")) / 2, 0.6f, glm::vec3(1.0f, 1.0f, 1.0f));
+                RenderText("SPACE per prendere", (SCR_WIDTH - getWidthOfString("SPACE per raccogliere")) / 2, (SCR_HEIGHT - getHeightOfString("SPACE per prendere")) / 2, 0.6f, glm::vec3(1.0f, 1.0f, 1.0f));
             }
         }
     }
